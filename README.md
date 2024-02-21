@@ -5,15 +5,16 @@ your LaTeX and Markdown files for both Inkscape and Adobe Illustrator.
 
 With key bindings you define, you can:
 
-* Create new `.svg` files in the current working directory.
-* Create new `.ai` (Adobe Illustrator) files in the current working directory.
-* Using [plenary](https://github.com/nvim-lua/plenary.nvim) let you search through the
-  available documents in your current project and open them in Inkscape / Adobe Illustrator.
+* Create new `.svg` files in the current working directory and opening them in Inkscape / Adobe Illustrator.
+* Create new `.ai` (Adobe Illustrator) files in the current working directory and opening them in Inkscape / Adobe Illustrator.
+* Using [telescope](https://github.com/nvim-telescope/telescope.nvim) you can search through the
+  available `.svg` and `.ai` documents and open them in Inkscape / Adobe Illustrator.
 
 ## Contributions, feedback and requests
 
 Happy to accept contributions/pull requests to extend and improve this simple 
-plugin. Also open to feedback and request, if you open a GitHub issue.
+plugin. Also open to feedback and requests for new features, if you open a 
+GitHub issue.
 
 ## Other notes
 
