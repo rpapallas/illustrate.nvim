@@ -10,6 +10,12 @@ With key bindings you define, you can:
 * Using [telescope](https://github.com/nvim-telescope/telescope.nvim) you can search through the
   available `.svg` and `.ai` documents and open them in Inkscape / Adobe Illustrator.
 
+<!-- TODO: Include a video/gif showing the main features. --> 
+
+<!-- TODO: Create a section explaining how to install using lazy.nvim --> 
+
+<!-- TODO: Create a section explaining configuration options --> 
+
 ## Contributions, feedback and requests
 
 Happy to accept contributions/pull requests to extend and improve this simple 
