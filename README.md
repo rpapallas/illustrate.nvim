@@ -1,4 +1,4 @@
-# Illustrate
+# 🎨 Illustrate
 
 Illustrate is a lua plugin for neovim to create and manage vector documents in
 your LaTeX and Markdown files for both Inkscape and Adobe Illustrator.
