@@ -1,4 +1,9 @@
 local M = {}
+local Config = require("illustrate.config")
+
+function M.setup(options)
+    require("illustrate.config").setup(options)
+end
 
 local function copy_template(template_path, destination_path)
     local ok, _, code = os.execute("cp " .. template_path .. " " .. destination_path)
@@ -45,8 +50,8 @@ local function create_figures_dir(figures_path)
 end
 
 function M.create_and_open_svg()
-    -- TODO: make sure the path here is defined in the config.
-    local figures_path = vim.fn.getcwd() .. "/figures"
+    vim.notify = require("notify")
+    local figures_path = Config.options.illustration_dir
     create_figures_dir(figures_path)
 
     local filename = vim.fn.input("[SVG] Filename (w/o extension): ") .. ".svg"
@@ -63,8 +68,8 @@ function M.create_and_open_svg()
 end
 
 function M.create_and_open_ai()
-    -- TODO: make sure the path here is defined in the config.
-    local figures_path = vim.fn.getcwd() .. "/figures"
+    vim.notify = require("notify")
+    local figures_path = Config.options.illustration_dir
     create_figures_dir(figures_path)
 
     local filename = vim.fn.input("[AI] Filename (w/o extension): ") .. ".ai"
