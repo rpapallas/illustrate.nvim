@@ -15,24 +15,21 @@ local function get_os()
 	return osname or "Windows"
 end
 
-function M.search_and_open()
-    vim.notify = require("notify")
+local function get_all_files()
     local figures_path = vim.fn.getcwd() .. "/" .. Config.options.illustration_dir
 
-    -- Just get SVG and AI (Adobe Illustrator) files.
-    local svg_files = vim.fn.globpath(figures_path, "*.svg", false, true)
+    local files = vim.fn.globpath(figures_path, "*.svg", false, true)
     local ai_files = vim.fn.globpath(figures_path, "*.ai", false, true)
 
-    -- TODO: the following which seems neater doesn't include all files from
-    -- both tables vim.tbl_extend('force', svg_files, ai_files) so had to concat
-    -- manually.
-    local files = {}
-    for _, file in ipairs(svg_files) do
-        table.insert(files, file)
-    end
     for _, file in ipairs(ai_files) do
         table.insert(files, file)
     end
+
+    return files
+end
+
+function M.search_and_open()
+    local files = get_all_files()
 
     pickers.new({}, {
         prompt_title = "Illustration Files",
