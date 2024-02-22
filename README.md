@@ -12,9 +12,55 @@ With key bindings you define, you can:
 
 <!-- TODO: Include a video/gif showing the main features. --> 
 
-<!-- TODO: Create a section explaining how to install using lazy.nvim --> 
+## Installation
 
-<!-- TODO: Create a section explaining configuration options --> 
+### lazy.nvim
+
+```lua
+return { 
+    'rpapallas/illustrate.nvim'
+    keys = function()
+        local illustrate = require('illustrate')
+        local illustrate_finder = require('illustrate.finder')
+        return {
+            {"<leader>vs", function() illustrate.create_and_open_svg() end, desc ="create new .svg file, open it in default app and insert code in document."},
+            {"<leader>va", function() illustrate.create_and_open_ai() end, desc ="craete new .ai file, open it in default app and insert code in document."},
+            {"<leader>vf", function() illustrate_finder.search_and_open() end, desc ="search for illustration files in current directory and open selected one in default app."},
+        }
+    end,
+    opts = {
+        -- optionally define options.
+    },
+}
+```
+
+The default options are:
+
+```lua
+illustration_dir = "figures", -- the directory to store new illustrations in cwd.
+template_files = { -- paths to saved template files used when creating new documents.
+    directory = {
+        svg = "~/templates/svg",
+        ai = "~/templates/ai",
+    },
+    default = {
+    }
+},
+text_templates = { -- default text templates to insert into the document per file type.
+    svg = {
+        tex = "\\begin{figure}[htbp]\n\\centering\n\\includesvg[width=\\linewidth]{%s}\n\\caption{caption}\n\\label{fig:label}\n\\end{figure}",
+        md = "![caption](%s)",
+    },
+    ai = {
+        tex = "\\begin{figure}[htbp]\n\\centering\n\\includesvg[width=\\linewidth]{%s}\n\\caption{caption}\n\\label{fig:label}\n\\end{figure}",
+        md = "![caption](%s)",
+    }
+},
+default_app = { -- default app to use for each file type.
+    svg = "inkscape", -- options: inkscape / illustrator
+    ai = "inkscape", -- options: inkscape / illustrator
+},
+```
 
 ## Contributions, feedback and requests
 
