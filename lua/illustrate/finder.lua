@@ -4,10 +4,20 @@ local finders = require "telescope.finders"
 local conf = require "telescope.config".values
 local action_state = require "telescope.actions.state"
 local actions = require "telescope.actions"
+local Config = require("illustrate.config")
+
+local function get_os()
+	local fh,err = assert(io.popen("uname -o 2>/dev/null","r"))
+	if fh then
+		osname = fh:read()
+	end
+
+	return osname or "Windows"
+end
 
 function M.search_and_open()
-    -- TODO: make sure the path to figures is defined in the config.
-    local figures_path = vim.fn.getcwd() .. "/figures"
+    vim.notify = require("notify")
+    local figures_path = vim.fn.getcwd() .. "/" .. Config.options.illustration_dir
 
     -- Just get SVG and AI (Adobe Illustrator) files.
     local svg_files = vim.fn.globpath(figures_path, "*.svg", false, true)
@@ -42,10 +52,15 @@ function M.search_and_open()
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()
 
-                -- TODO: make sure the program to use is defined in the config.
-                -- also make sure this works for Windows and Linux on top of 
-                -- macOS.
-                os.execute("open -a 'Adobe Illustrator' " .. selection.value)
+                local os_name = get_os()
+                if os_name == 'Darwin' then
+                    local default_app = Config.options.default_app.svg
+                    if default_app == 'inkscape' then
+                        os.execute("open -a 'inkscape' " .. selection.value)
+                    elseif default_app == 'illustrator' then
+                        os.execute("open -a 'Adobe Illustrator' " .. selection.value)
+                    end
+                end
             end)
             return true
         end,
