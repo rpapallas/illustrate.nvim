@@ -1,0 +1,6 @@
+[project]
+name = "illustrator.nvim"
+version = "0.0.1"
+description = "quickly create and edit vector documents in neovim."
+author = "Rafael Papallas"
+email = "rpapallas@gmail.com"

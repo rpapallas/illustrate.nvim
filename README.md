@@ -1,14 +1,24 @@
-# 🎨 Illustrate
+<h1 align="center">🎨 Illustrate</h1>
 
-Illustrate is a lua plugin for neovim to create and manage vector documents in
-your LaTeX and Markdown files for both Inkscape and Adobe Illustrator.
+<p align="center">
 
-With key bindings you define, you can:
+<img src="https://img.shields.io/badge/Neovim-57A143?logo=neovim&logoColor=fff&style=for-the-badge" alt="Neovim" />
 
-* Create new `.svg` files in the current working directory and opening them in Inkscape / Adobe Illustrator.
-* Create new `.ai` (Adobe Illustrator) files in the current working directory and opening them in Inkscape / Adobe Illustrator.
+<img src="https://img.shields.io/badge/Made%20With%20Lua-2C2D72?logo=lua&logoColor=fff&style=for-the-badge" alt="made with lua" >
+
+</p>
+
+Illustrate is a lua plugin for neovim that lets you to quickly create and
+manage vector documents within neovim. It works in LaTeX and Markdown files,
+using both Inkscape (Linux, macOS) and Adobe Illustrator (macOS).
+
+With key bindings you define, `illustrate` can:
+
+* Create a new `.svg` or `.ai` file in your current working directory,
+  insert code snippet (tex/md) and open the vector document in Inkscape / Adobe Illustrator.
 * Using [telescope](https://github.com/nvim-telescope/telescope.nvim) you can search through the
-  available `.svg` and `.ai` documents and open them in Inkscape / Adobe Illustrator.
+  available `.svg` and `.ai` documents in your current working directory and
+  open them in Inkscape / Adobe Illustrator.
 
 <!-- TODO: Include a video/gif showing the main features. --> 
 
@@ -75,6 +85,7 @@ GitHub issue.
 
 ## Other notes
 
-* This plugin is inspired from [this](https://github.com/gillescastel/inkscape-figures) Python project from [Gilles Castel](https://github.com/gillescastel) and his excellent blog post [here](https://castel.dev/post/lecture-notes-2/), but extended to support Adobe Illustrator on top of Inkscape and be a native lua plugin for neovim.
 * This is my first neovim plugin and the first time I write a lua program (any feedback is appreciated).
+* This plugin is inspired from [this](https://github.com/gillescastel/inkscape-figures) Python project from [Gilles Castel](https://github.com/gillescastel) and his excellent blog post [here](https://castel.dev/post/lecture-notes-2/), but extended to support Adobe Illustrator on top of Inkscape and be a native lua plugin for neovim.
+* The structure of this repo is based on [nvim-plugin-template](https://github.com/mistricky/nvim-plugin-template)
 
