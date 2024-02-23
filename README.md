@@ -6,13 +6,13 @@
 
 <img src="https://img.shields.io/badge/Made%20With%20Lua-2C2D72?logo=lua&logoColor=fff&style=for-the-badge" alt="made with lua" >
 
-</p>
-
 Illustrate is a lua plugin for neovim that lets you to quickly create and
 manage vector documents within neovim. It works in LaTeX and Markdown files,
 using both Inkscape (Linux, macOS) and Adobe Illustrator (macOS).
 
 ![demo](assets/demo.gif)
+
+</p>
 
 With key bindings you define, `illustrate` can:
 
