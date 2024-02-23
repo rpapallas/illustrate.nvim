@@ -1,25 +1,42 @@
 local M = {}
 
 M.namespace = vim.api.nvim_create_namespace("illustrate")
+local templates_dir = vim.fn.stdpath("data") .. "/lazy/illustrate/templates"
 
 local defaults = {
     illustration_dir = "figures",
     template_files = {
         directory = {
-            svg = "~/inbox/illustrate.nvim/templates/svg",
-            ai = "~/inbox/illustrate.nvim/templates/ai",
+            svg = templates_dir .. "/svg/",
+            ai = templates_dir .. "/ai/",
         },
         default = {
+            svg = "default.svg",
+            ai = "default.ai",
         }
     },
     text_templates = {
         svg = {
-            tex = "\\begin{figure}[htbp]\n\\centering\n\\includesvg[width=\\linewidth]{%s}\n\\caption{caption}\n\\label{fig:label}\n\\end{figure}",
-            md = "![caption](%s)",
+            tex = [[
+\begin{figure}[h]
+  \centering
+  \includesvg[width=0.8\textwidth]{$FILE_PATH}
+  \caption{Caption}
+  \label{fig:}
+\end{figure}
+            ]],
+            md = "![caption]($FILE_PATH)",
         },
         ai = {
-            tex = "\\begin{figure}[htbp]\n\\centering\n\\includesvg[width=\\linewidth]{%s}\n\\caption{caption}\n\\label{fig:label}\n\\end{figure}",
-            md = "![caption](%s)",
+            tex = [[
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\linewidth]{$FILE_PATH}
+  \caption{Caption}
+  \label{fig:}
+\end{figure}
+            ]],
+            md = "![caption]($FILE_PATH)",
         }
     },
     default_app = {
