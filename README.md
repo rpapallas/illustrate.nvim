@@ -22,9 +22,15 @@ With key bindings you define, `illustrate` can:
   available `.svg` and `.ai` documents in your current working directory and
   open them in Inkscape / Adobe Illustrator.
 
-<!-- TODO: Include a video/gif showing the main features. --> 
+The plugin is currently only supporting macOS and Linux, however I am open to
+support Windows and happy to merge request. I just don't have a Windows machine
+to test it.
 
 ## Installation
+
+Currently the plugin is written for lazy.nvim. However, I am happy to consider
+other plugin managers and support them (feel free to open a pull request; happy
+to merge it).
 
 ### lazy.nvim
 
