@@ -99,6 +99,20 @@ The default options (that you can override in `opts`) are:
     },
 ```
 
+## Using `.svg` and `.ai` files directly in LaTeX
+
+You can use `.svg` file directly in LaTeX given that you have inkscape 
+installed. You can then use `\includesvg[\linewidth]{figures/figure.svg}`.
+
+To use `.ai` files directly, however, you need to put the following line in your
+LaTeX project:
+
+```tex
+\DeclareGraphicsRule{.ai}{pdf}{.ai}{}
+```
+
+then you can include it like so: `\includegraphics[\linewidth]{figures/figure.ai}`.
+
 ## Contributions, feedback and requests
 
 Happy to accept contributions/pull requests to extend and improve this simple 
