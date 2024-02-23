@@ -16,7 +16,11 @@ function M.setup(options)
 end
 
 local function copy_template(template_path, destination_path)
-    local ok, _, code = os.execute("cp " .. template_path .. " " .. destination_path)
+    local ok, _, _ = os.execute("cp " .. template_path .. " " .. destination_path)
+    if not ok then
+        print("Failed to copy template.")
+        return
+    end
 end
 
 local function insert_include_code(filename)
@@ -62,11 +66,10 @@ local function create_illustration_dir(illustration_dir_path)
     end
 end
 
-function M.create_and_open_svg()
+local function create_document(filename)
     local illustration_dir_path = Config.options.illustration_dir
     create_illustration_dir(illustration_dir_path)
 
-    local filename = vim.fn.input("[SVG] Filename (w/o extension): ") .. ".svg"
     local destination_filename = illustration_dir_path .. "/" .. filename
 
     local template_path = Config.options.template_files.directory.svg .. Config.options.template_files.default.svg
@@ -82,25 +85,14 @@ function M.create_and_open_svg()
     end
 end
 
+function M.create_and_open_svg()
+    local filename = vim.fn.input("[SVG] Filename (w/o extension): ") .. ".svg"
+    create_document(filename)
+end
+
 function M.create_and_open_ai()
-    vim.notify = require("notify")
-    local illustration_dir_path = Config.options.illustration_dir
-    create_illustration_dir(illustration_dir_path)
-
     local filename = vim.fn.input("[AI] Filename (w/o extension): ") .. ".ai"
-    local destination_filename = illustration_dir_path .. "/" .. filename
-
-    local template_path = Config.options.template_files.directory.ai .. Config.options.template_files.default.ai
-    copy_template(template_path, destination_filename)
-    insert_include_code(destination_filename)
-
-    local os_name = get_os()
-    local default_app = Config.options.default_app.svg
-    if default_app == 'inkscape' then
-        os.execute("inkscape " .. destination_filename)
-    elseif default_app == 'illustrator' and os_name == 'Darwin' then
-        os.execute("open -a 'Adobe Illustrator' " .. destination_filename)
-    end
+    create_document(filename)
 end
 
 return M
