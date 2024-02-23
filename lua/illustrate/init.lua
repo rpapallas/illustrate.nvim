@@ -66,13 +66,12 @@ local function create_illustration_dir(illustration_dir_path)
     end
 end
 
-local function create_document(filename)
+local function create_document(filename, template_path)
     local illustration_dir_path = Config.options.illustration_dir
     create_illustration_dir(illustration_dir_path)
 
     local destination_filename = illustration_dir_path .. "/" .. filename
 
-    local template_path = Config.options.template_files.directory.svg .. Config.options.template_files.default.svg
     copy_template(template_path, destination_filename)
     insert_include_code(destination_filename)
 
@@ -87,12 +86,16 @@ end
 
 function M.create_and_open_svg()
     local filename = vim.fn.input("[SVG] Filename (w/o extension): ") .. ".svg"
-    create_document(filename)
+    local template_files = Config.options.template_files
+    local template_path = template_files.directory.svg .. template_files.default.svg
+    create_document(filename, template_path)
 end
 
 function M.create_and_open_ai()
     local filename = vim.fn.input("[AI] Filename (w/o extension): ") .. ".ai"
-    create_document(filename)
+    local template_files = Config.options.template_files
+    local template_path = template_files.directory.ai .. template_files.default.ai
+    create_document(filename, template_path)
 end
 
 return M
