@@ -68,6 +68,11 @@ Happy to accept contributions/pull requests to extend and improve this simple
 plugin. Also open to feedback and requests for new features, if you open a 
 GitHub issue.
 
+## Features
+
+- [ ] Telescope to show preview of svg files.
+- [ ] Allow opening of a figure under cursor (or while cursor within a figure environment).
+
 ## Other notes
 
 * This plugin is inspired from [this](https://github.com/gillescastel/inkscape-figures) Python project from [Gilles Castel](https://github.com/gillescastel) and his excellent blog post [here](https://castel.dev/post/lecture-notes-2/), but extended to support Adobe Illustrator on top of Inkscape and be a native lua plugin for neovim.
