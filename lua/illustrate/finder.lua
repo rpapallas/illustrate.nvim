@@ -17,7 +17,6 @@ end
 
 local function get_all_files()
     local figures_path = vim.fn.getcwd() .. "/" .. Config.options.illustration_dir
-
     local files = vim.fn.globpath(figures_path, "*.svg", false, true)
     local ai_files = vim.fn.globpath(figures_path, "*.ai", false, true)
 
