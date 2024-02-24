@@ -36,7 +36,7 @@ to merge it).
 
 ```lua
 return { 
-    'rpapallas/illustrate.nvim'
+    'rpapallas/illustrate.nvim',
     keys = function()
         local illustrate = require('illustrate')
         local illustrate_finder = require('illustrate.finder')
