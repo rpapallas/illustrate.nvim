@@ -6,8 +6,8 @@
 
 <img src="https://img.shields.io/badge/Made%20With%20Lua-2C2D72?logo=lua&logoColor=fff&style=for-the-badge" alt="made with lua" >
 
-Illustrate is a lua plugin for neovim that lets you to quickly create and
-manage vector documents within neovim. It works in LaTeX and Markdown files,
+Illustrate is a lua plugin for neovim to quickly create and
+edit vector documents within neovim. It works in LaTeX and Markdown files,
 using both Inkscape (Linux, macOS) and Adobe Illustrator (macOS).
 
 ![demo](assets/demo.gif)
@@ -22,15 +22,14 @@ With key bindings you define, `illustrate` can:
   available `.svg` and `.ai` documents in your current working directory and
   open them in Inkscape / Adobe Illustrator.
 
-The plugin is currently only supporting macOS and Linux, however I am open to
-support Windows and happy to merge request. I just don't have a Windows machine
-to test it.
+The plugin currently supports macOS and Linux, however, I am open to
+support Windows and happy to merge requests. I just don't have a Windows machine
+to test.
 
 ## Installation
 
 Currently the plugin is written for lazy.nvim. However, I am happy to consider
-other plugin managers and support them (feel free to open a pull request; happy
-to merge it).
+other plugin managers and support them (feel free to open a pull request).
 
 ### lazy.nvim
 
