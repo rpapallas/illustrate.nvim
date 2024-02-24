@@ -32,10 +32,8 @@ local function insert_include_code(filename)
         insert_code = Config.options.text_templates.svg.tex:gsub("$FILE_PATH", filename)
     elseif filetype == "tex" and extension == "ai" then
         insert_code = Config.options.text_templates.ai.tex:gsub("$FILE_PATH", filename)
-    elseif filetype == "md" and extension == "svg" then
+    elseif filetype == "markdown" and extension == "svg" then
         insert_code = Config.options.text_templates.svg.md:gsub("$FILE_PATH", filename)
-    elseif filetype == "md" and extension == "ai" then
-        insert_code = Config.options.text_templates.ai.md:gsub("$FILE_PATH", filename)
     end
 
     if insert_code ~= "" then
