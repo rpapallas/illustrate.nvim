@@ -78,7 +78,7 @@ local function create_document(filename, template_path)
     local os_name = get_os()
     local default_app = Config.options.default_app.svg
     if default_app == 'inkscape' then
-        os.execute("inkscape " .. destination_filename)
+        os.execute("inkscape " .. destination_filename .. " >/dev/null 2>&1 &")
     elseif default_app == 'illustrator' and os_name == 'Darwin' then
         os.execute("open -a 'Adobe Illustrator' " .. destination_filename)
     end

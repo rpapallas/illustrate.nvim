@@ -52,7 +52,7 @@ function M.search_and_open()
                 local os_name = get_os()
                 local default_app = Config.options.default_app.svg
                 if default_app == 'inkscape' then
-                    os.execute("inkscape " .. selection.value)
+                    os.execute("inkscape " .. selection.value .. " >/dev/null 2>&1 &")
                 elseif default_app == 'illustrator' and os_name == 'Darwin' then
                     os.execute("open -a 'Adobe Illustrator' " .. selection.value)
                 end
