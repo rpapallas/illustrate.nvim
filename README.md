@@ -102,6 +102,8 @@ The default options (that you can override in `opts`) are:
 
 You can use `.svg` file directly in LaTeX given that you have inkscape 
 installed. You can then use `\includesvg[\linewidth]{figures/figure.svg}`.
+Make sure to include `--shell-escape` when you compile 
+(e.g. `lualatex --shell-escape main.tex ...`).
 
 To use `.ai` files directly, however, you need to put the following line in your
 LaTeX project:
