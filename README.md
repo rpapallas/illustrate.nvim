@@ -90,7 +90,6 @@ The default options (that you can override in `opts`) are:
   \label{fig:}
 \end{figure}
             ]],
-            md = "![caption]($FILE_PATH)",
         }
     },
     default_app = { -- default software to use for opening ai/svg files.
