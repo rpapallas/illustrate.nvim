@@ -6,9 +6,9 @@
 
 <img src="https://img.shields.io/badge/Made%20With%20Lua-2C2D72?logo=lua&logoColor=fff&style=for-the-badge" alt="made with lua" >
 
-Illustrate is a lua plugin for neovim to quickly create and
-edit vector documents within neovim. It works in LaTeX and Markdown files,
-using both Inkscape (Linux, macOS) and Adobe Illustrator (macOS).
+Illustrate is a lua plugin for neovim that lets you to quickly create, search 
+and open vector files in Inkscape (Linux, macOS) and/or Adobe Illustrator (macOS) 
+from within neovim. It works with LaTeX and Markdown files.
 
 ![demo](assets/demo.gif)
 
@@ -17,14 +17,15 @@ using both Inkscape (Linux, macOS) and Adobe Illustrator (macOS).
 With key bindings you define, `illustrate` can:
 
 * Create a new `.svg` or `.ai` file in your current working directory,
-  insert code snippet (tex/md) and open the vector document in Inkscape / Adobe Illustrator.
-* Using [telescope](https://github.com/nvim-telescope/telescope.nvim) you can search through the
-  available `.svg` and `.ai` documents in your current working directory and
-  open them in Inkscape / Adobe Illustrator.
+  insert a code snippet (depending on the file type, tex/md) and open the 
+  vector document in Inkscape/Adobe Illustrator.
+* Using [telescope](https://github.com/nvim-telescope/telescope.nvim) you can 
+  search through the available `.svg` and `.ai` documents in your current 
+  working directory and open them in Inkscape/Adobe Illustrator.
 
-The plugin currently supports macOS and Linux, however, I am open to
-support Windows and happy to merge requests. I just don't have a Windows machine
-to test.
+The plugin currently supports macOS and Linux only, however, I am open to
+support Windows, and happy to merge requests on this matter. I just don't 
+have a Windows machine to test it.
 
 ## Installation
 
@@ -54,23 +55,23 @@ return {
 The default options (that you can override in `opts`) are:
 
 ```lua
-    illustration_dir = "figures",
-    template_files = { -- Templates used when new vector documents are created.
-        -- You can optionally define a path to your own template dir and
-        -- bootstrap your documents with a better template than an empty 
-        -- canvas. 
-        directory = {
-            svg = templates_dir .. "/svg/",
-            ai = templates_dir .. "/ai/",
-        },
-        default = {
-            svg = "default.svg",
-            ai = "default.ai",
-        }
+illustration_dir = "figures",
+template_files = { -- Templates used when new vector documents are created.
+    -- You can optionally define a path to your own template dir and
+    -- bootstrap your documents with a better template than an empty 
+    -- canvas. 
+    directory = {
+        svg = templates_dir .. "/svg/",
+        ai = templates_dir .. "/ai/",
     },
-    text_templates = { -- Default code template for each vector type (svg/ai) and each document (tex/md)
-        svg = {
-            tex = [[
+    default = {
+        svg = "default.svg",
+        ai = "default.ai",
+    }
+},
+text_templates = { -- Default code template for each vector type (svg/ai) and each document (tex/md)
+    svg = {
+        tex = [[
 \begin{figure}[h]
   \centering
   \includesvg[width=0.8\textwidth]{$FILE_PATH}
@@ -78,10 +79,10 @@ The default options (that you can override in `opts`) are:
   \label{fig:}
 \end{figure}
             ]],
-            md = "![caption]($FILE_PATH)",
-        },
-        ai = {
-            tex = [[
+        md = "![caption]($FILE_PATH)",
+    },
+    ai = {
+        tex = [[
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.8\linewidth]{$FILE_PATH}
@@ -89,12 +90,12 @@ The default options (that you can override in `opts`) are:
   \label{fig:}
 \end{figure}
             ]],
-        }
-    },
-    default_app = { -- default software to use for opening ai/svg files.
-        svg = "inkscape", -- Options: inkscape/illustrator
-        ai = "inkscape", -- Options: inkscape/illustrator
-    },
+    }
+},
+default_app = { -- default software to use for opening ai/svg files.
+    svg = "inkscape", -- Options: inkscape/illustrator
+    ai = "inkscape", -- Options: inkscape/illustrator
+},
 ```
 
 ## Using `.svg` and `.ai` files directly in LaTeX
@@ -116,17 +117,17 @@ then you can include it like so: `\includegraphics[\linewidth]{figures/figure.ai
 ## Contributions, feedback and requests
 
 Happy to accept contributions/pull requests to extend and improve this simple 
-plugin. Also open to feedback and requests for new features. Please open a 
+plugin. I am also open to feedback and requests for new features. Please open a 
 GitHub issue for those.
 
 ## Features
 
 The following features are on the horizon. If you think you can help, I would
-be happy to accept and merge your pull request!
+be more than happy to accept and merge your pull request!
 
-- [ ] Telescope to show preview of svg files.
-- [ ] Allow opening of a figure under cursor (or while cursor within a figure environment).
-- [ ] Implement the functionalities for Microsoft Windows.
+- [ ] Telescope to show preview of `.svg` files.
+- [ ] Allow opening of a figure under cursor (or while cursor within a figure environment in LaTeX).
+- [ ] Implement the functionalities for Microsoft Windows (Inkscape and Adobe Illustrator).
 - [ ] Implement support for Adobe Illustrator on Linux (?). Not sure if Illustrator is runnable on Linux.
 
 ## Other notes
