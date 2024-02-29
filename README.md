@@ -41,9 +41,21 @@ return {
         local illustrate = require('illustrate')
         local illustrate_finder = require('illustrate.finder')
         return {
-            {"<leader>vs", function() illustrate.create_and_open_svg() end, desc ="create new .svg file, open it in default app and insert code in document."},
-            {"<leader>va", function() illustrate.create_and_open_ai() end, desc ="craete new .ai file, open it in default app and insert code in document."},
-            {"<leader>vf", function() illustrate_finder.search_and_open() end, desc ="search for illustration files in current directory and open selected one in default app."},
+            {
+                "<leader>is",
+                function() illustrate.create_and_open_svg() end,
+                desc =""
+            },
+            {
+                "<leader>ia",
+                function() illustrate.create_and_open_ai() end,
+                desc =""
+            },
+            {
+                "<leader>if",
+                function() illustrate_finder.search_and_open() end,
+                desc =""
+            },
         }
     end,
     opts = {
