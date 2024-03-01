@@ -6,7 +6,7 @@
 
 <img src="https://img.shields.io/badge/Made%20With%20Lua-2C2D72?logo=lua&logoColor=fff&style=for-the-badge" alt="made with lua" >
 
-Illustrate is a lua plugin for neovim that lets you to quickly create, search 
+Illustrate is a lua plugin for neovim that lets you quickly create, search 
 and open vector files in Inkscape (Linux, macOS) and/or Adobe Illustrator (macOS) 
 from within neovim. It works with LaTeX and Markdown files.
 
@@ -14,47 +14,68 @@ from within neovim. It works with LaTeX and Markdown files.
 
 </p>
 
+## Features
+
 With key bindings you define, `illustrate` can:
 
-* Create a new `.svg` or `.ai` file in your current working directory,
-  insert a code snippet (depending on the file type, tex/md) and open the 
-  vector document in Inkscape/Adobe Illustrator.
-* Using [telescope](https://github.com/nvim-telescope/telescope.nvim) you can 
-  search through the available `.svg` and `.ai` documents in your current 
-  working directory and open them in Inkscape/Adobe Illustrator.
+* Create a new `.svg` file with a name of your choice, insert a code snippet
+(for both latex and markdown) of the figure automatically, and open the figure in either
+Inkscape or Adobe Illustrator. The example key binding provided below is
+`<leader>is`.
+* Create a new `.ai` file with a name of your choice, insert a code snippet (for
+both latex and markdown) of the figure automatically, and open the figure in either Inkscape
+or Adobe Illustrator. The example key binding provided below is `<leader>ia`.
+* Open the figure under the cursor (if in LaTeX, it will work even if the cursor
+is anywhere within a figure environment), in either Inkscape or Adobe
+Illustrator. The example key binding below is `<leader>io`.
+* By using [telescope](https://github.com/nvim-telescope/telescope.nvim), you can
+search through the available `.svg` and `.ai` documents in your current working
+directory and open them in Inkscape or Adobe Illustrator. The example key
+binding below is `<leader>if`.
 
-The plugin currently supports macOS and Linux only, however, I am open to
-support Windows, and happy to merge requests on this matter. I just don't 
-have a Windows machine to test it.
+The plugin currently supports macOS and Linux only, but I am open to add
+support for Windows too. I am happy to accept merge requests on this matter, I 
+just don't have a Windows machine to develop/test it.
 
 ## Installation
 
-Currently the plugin is written for lazy.nvim. However, I am happy to consider
-other plugin managers and support them (feel free to open a pull request).
+The plugin is currently designed for
+[lazy.nvim](https://github.com/folke/lazy.nvim). However, I am open to
+supporting other plugin managers as well (please feel free to open a pull
+request).
 
 ### lazy.nvim
 
 ```lua
 return { 
     'rpapallas/illustrate.nvim',
+    dependencies = {
+        "rcarriga/nvim-notify",
+    },
     keys = function()
         local illustrate = require('illustrate')
         local illustrate_finder = require('illustrate.finder')
+
         return {
             {
                 "<leader>is",
                 function() illustrate.create_and_open_svg() end,
-                desc =""
+                desc = "Create and open a new SVG file with provided name."
             },
             {
                 "<leader>ia",
                 function() illustrate.create_and_open_ai() end,
-                desc =""
+                desc = "Create and open a new Adobe Illustrator file with provided name."
+            },
+            {
+                "<leader>io",
+                function() illustrate.open_under_cursor() end,
+                desc = "Open file under cursor (or file within environment under cursor)."
             },
             {
                 "<leader>if",
                 function() illustrate_finder.search_and_open() end,
-                desc =""
+                desc = "Use telescope to search and open illustrations in default app."
             },
         }
     end,
@@ -138,9 +159,9 @@ The following features are on the horizon. If you think you can help, I would
 be more than happy to accept and merge your pull request!
 
 - [ ] Telescope to show preview of `.svg` files.
-- [ ] Allow opening of a figure under cursor (or while cursor within a figure environment in LaTeX).
 - [ ] Implement the functionalities for Microsoft Windows (Inkscape and Adobe Illustrator).
 - [ ] Implement support for Adobe Illustrator on Linux (?). Not sure if Illustrator is runnable on Linux.
+- [x] Allow opening of a figure under cursor (or while cursor within a figure environment in LaTeX).
 
 ## Other notes
 
