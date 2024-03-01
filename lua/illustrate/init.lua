@@ -1,24 +1,16 @@
 local M = {}
+local utils = require('illustrate.utils')
 local Config = require("illustrate.config")
-
-local function get_os()
-	local fh, _ = assert(io.popen("uname -o 2>/dev/null","r"))
-    local osname
-	if fh then
-		osname = fh:read()
-	end
-
-	return osname or "Windows"
-end
+vim.notify = require("notify")
 
 function M.setup(options)
-    require("illustrate.config").setup(options)
+    Config.setup(options)
 end
 
 local function copy_template(template_path, destination_path)
     local ok, _, _ = os.execute("cp " .. template_path .. " " .. destination_path)
     if not ok then
-        print("Failed to copy template.")
+        vim.notify("Failed to copy template.", "Error")
         return
     end
 end
@@ -59,51 +51,23 @@ local function create_illustration_dir(illustration_dir_path)
     local command = "mkdir -p " .. illustration_dir_path
     local ok, _ = os.execute(command)
     if not ok then
-        print("Failed to create the 'figures' directory.")
+        vim.notify("Failed to create the 'figures' directory.")
         return
-    end
-end
-
-local function open(filename)
-    local os_name = get_os()
-    local default_app = Config.options.default_app.svg
-    if default_app == 'inkscape' then
-        os.execute("inkscape " .. filename .. " >/dev/null 2>&1 &")
-    elseif default_app == 'illustrator' and os_name == 'Darwin' then
-        os.execute("open -a 'Adobe Illustrator' " .. filename)
     end
 end
 
 local function create_document(filename, template_path)
     local illustration_dir_path = Config.options.illustration_dir
     create_illustration_dir(illustration_dir_path)
-
     local destination_filename = illustration_dir_path .. "/" .. filename
-
     copy_template(template_path, destination_filename)
-    insert_include_code(destination_filename)
-    open(destination_filename)
+    return destination_filename
 end
 
-function M.create_and_open_svg()
-    local filename = vim.fn.input("[SVG] Filename (w/o extension): ") .. ".svg"
-    local template_files = Config.options.template_files
-    local template_path = template_files.directory.svg .. template_files.default.svg
-    create_document(filename, template_path)
-end
-
-function M.create_and_open_ai()
-    local filename = vim.fn.input("[AI] Filename (w/o extension): ") .. ".ai"
-    local template_files = Config.options.template_files
-    local template_path = template_files.directory.ai .. template_files.default.ai
-    create_document(filename, template_path)
-end
-
-local function extract_svg_path()
-    vim.notify = require("notify")
+local function extract_path_from_tex_figure_environment()
     local current_line = vim.api.nvim_win_get_cursor(0)[1]
     local start_line = current_line
-    vim.notify("" .. current_line, 'info')
+    local last_line_number = vim.api.nvim_buf_line_count(0)
 
     -- Search backward to find the start of the figure environment
     while start_line > 0 do
@@ -114,10 +78,14 @@ local function extract_svg_path()
         start_line = start_line - 1
     end
 
+    if start_line ~= current_line and start_line == 0 then
+        return
+    end
+
     local end_line = start_line
 
     -- Search forward to find the end of the figure environment
-    while end_line <= current_line do
+    while end_line <= last_line_number do
         local line = vim.api.nvim_buf_get_lines(0, end_line - 1, end_line, false)[1]
         if line:find("\\end{figure}") then
             break
@@ -125,14 +93,12 @@ local function extract_svg_path()
         end_line = end_line + 1
     end
 
-    vim.notify(" " .. start_line .. ", " .. current_line .. ", " .. end_line, 'info')
-
     -- Check if the cursor position is within the figure environment
     if current_line >= start_line and current_line <= end_line then
         -- Search within the figure environment for the includesvg line
         for i = start_line, end_line do
             local line = vim.api.nvim_buf_get_lines(0, i - 1, i, false)[1]
-            local path = line:match("\\includesvg%[?[^%]]*%]?%{(.-)%}")
+            local path = line:match("\\include[s]?vg%[?[^%]]*%]?%{(.-)%}") or line:match("\\includegraphics%[?[^%]]*%]?%{(.-)%}")
             if path then
                 return path
             end
@@ -142,25 +108,40 @@ end
 
 function M.open_under_cursor()
     local filetype = vim.bo.filetype
-    local line = vim.fn.getline('.')
+    local file_path = nil
 
     if filetype == 'tex' then
-        local svg_path = extract_svg_path()
-        if svg_path then
-            open(svg_path)
-        else
-            print('SVG file not found')
-        end
-    elseif filetype == 'markdown' and line:find('!%[[^%]]*%]%((.-)%s*%)') then
-        local img_file = line:match('!%[[^%]]*%]%((.-)%s*%)')
-        if img_file then
-            open(img_file)
-        else
-            print('Image file not found')
-        end
+        file_path = extract_path_from_tex_figure_environment()
+    elseif filetype == 'markdown' then
+        local line = vim.fn.getline('.')
+        file_path = line:match('!%[[^%]]*%]%((.-)%s*%)')
     else
-        print('Not in LaTeX figure environment or Markdown image tag')
+        vim.notify("Not a tex or markdown document.", "info")
     end
+
+    if file_path then
+        utils.open(file_path)
+    else
+        vim.notify("No figure environment found under cursor", "info")
+    end
+end
+
+function M.create_and_open_svg()
+    local filename = vim.fn.input("[SVG] Filename (w/o extension): ") .. ".svg"
+    local template_files = Config.options.template_files
+    local template_path = template_files.directory.svg .. template_files.default.svg
+    local new_document_path = create_document(filename, template_path)
+    insert_include_code(new_document_path)
+    utils.open(new_document_path)
+end
+
+function M.create_and_open_ai()
+    local filename = vim.fn.input("[AI] Filename (w/o extension): ") .. ".ai"
+    local template_files = Config.options.template_files
+    local template_path = template_files.directory.ai .. template_files.default.ai
+    local new_document_path = create_document(filename, template_path)
+    insert_include_code(new_document_path)
+    utils.open(new_document_path)
 end
 
 return M
