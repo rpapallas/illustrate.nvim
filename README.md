@@ -154,16 +154,6 @@ Happy to accept contributions/pull requests to extend and improve this simple
 plugin. I am also open to feedback and requests for new features. Please open a 
 GitHub issue for those.
 
-## Features
-
-The following features are on the horizon. If you think you can help, I would
-be more than happy to accept and merge your pull request!
-
-- [ ] Telescope to show preview of `.svg` files.
-- [ ] Implement the functionalities for Microsoft Windows (Inkscape and Adobe Illustrator).
-- [ ] Implement support for Adobe Illustrator on Linux (?). Not sure if Illustrator is runnable on Linux.
-- [x] Allow opening of a figure under cursor (or while cursor within a figure environment in LaTeX).
-
 ## Other notes
 
 * This is my first neovim plugin and the first time I write a lua code (any feedback is appreciated).
