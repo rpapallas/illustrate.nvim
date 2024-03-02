@@ -123,6 +123,7 @@ text_templates = { -- Default code template for each vector type (svg/ai) and ea
   \label{fig:}
 \end{figure}
             ]],
+        md = "![caption]($FILE_PATH)",
     }
 },
 default_app = { -- default software to use for opening ai/svg files.

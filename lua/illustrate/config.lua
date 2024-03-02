@@ -36,6 +36,7 @@ local defaults = {
   \label{fig:}
 \end{figure}
             ]],
+            md = "![caption]($FILE_PATH)",
         }
     },
     default_app = {
