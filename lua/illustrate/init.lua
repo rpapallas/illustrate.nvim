@@ -7,6 +7,24 @@ function M.setup(options)
     Config.setup(options)
 end
 
+local function create_documenmt(file_path, type)
+    local filename = vim.fn.input("File does not exist, create now?", file_path:match(".+/([^/]+)$"))
+
+    if type == "svg" then
+        local template_files = Config.options.template_files
+        local template_path = template_files.directory.svg .. template_files.default.svg
+        local new_document_path = utils.create_document(filename, template_path)
+        utils.open(new_document_path)
+    elseif type == "ai" then
+        local template_files = Config.options.template_files
+        local template_path = template_files.directory.ai .. template_files.default.ai
+        local new_document_path = utils.create_document(filename, template_path)
+        utils.open(new_document_path)
+    else
+        vim.notify("[illustrate.nvim] Unrecognised file type.", "error")
+    end
+end
+
 function M.open_under_cursor()
     local filetype = vim.bo.filetype
     local file_path = nil
@@ -22,7 +40,13 @@ function M.open_under_cursor()
     end
 
     if file_path then
-        utils.open(file_path)
+        local open_was_successful = utils.open(file_path)
+
+        if open_was_successful == false and file_path:match("%.ai$") then
+            create_documenmt(file_path, "ai")
+        elseif open_was_successful == false and file_path:match("%.svg$") then
+            create_documenmt(file_path, "svg")
+        end
     else
         vim.notify("[illustrate.nvim] No figure environment found under cursor", "info")
     end

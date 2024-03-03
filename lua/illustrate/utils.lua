@@ -23,10 +23,10 @@ local function execute(command, background)
         local result = handle:read("*a")
         handle:close()
 
-        if result ~= "" then
-            vim.notify("[illustrate.nvim] Error: " .. result, "error")
-        end
+        return result == ""
     end
+
+    return true
 end
 
 local function copy_template(template_path, filename)
@@ -46,9 +46,9 @@ function M.open(filename)
     local default_app = Config.options.default_app.svg
 
     if default_app == 'inkscape' then
-        execute("inkscape " .. filename .. " >/dev/null ", true)
+        return execute("inkscape " .. filename .. " >/dev/null ", true)
     elseif default_app == 'illustrator' and os_name == 'Darwin' then
-        execute("open -a 'Adobe Illustrator' " .. filename, false)
+        return execute("open -a 'Adobe Illustrator' " .. filename, false)
     end
 end
 
