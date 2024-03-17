@@ -1,5 +1,5 @@
 local M = {}
-local utils = require('illustrate.utils')
+local utils = require("illustrate.utils")
 local Config = require("illustrate.config")
 vim.notify = require("notify")
 
@@ -11,20 +11,20 @@ function M.open_under_cursor()
     local filetype = vim.bo.filetype
     local file_path = nil
 
-    if filetype == 'tex' then
+    if filetype == "tex" then
         file_path = utils.extract_path_from_tex_figure_environment()
-    elseif filetype == 'markdown' then
-        local line = vim.fn.getline('.')
-        file_path = line:match('!%[[^%]]*%]%((.-)%s*%)')
+    elseif filetype == "markdown" then
+        local line = vim.fn.getline(".")
+        file_path = line:match("!%[[^%]]*%]%((.-)%s*%)")
     else
-        vim.notify("[illustrate.nvim] Not a tex or markdown document.", "info")
+        vim.notify("[illustrate.nvim] Not a tex or markdown document.", vim.log.levels.INFO)
         return
     end
 
     if file_path then
         utils.open(file_path)
     else
-        vim.notify("[illustrate.nvim] No figure environment found under cursor", "info")
+        vim.notify("[illustrate.nvim] No figure environment found under cursor", vim.log.levels.INFO)
     end
 end
 
@@ -47,4 +47,3 @@ function M.create_and_open_ai()
 end
 
 return M
-

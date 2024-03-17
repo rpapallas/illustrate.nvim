@@ -3,19 +3,19 @@ local Config = require("illustrate.config")
 vim.notify = require("notify")
 
 local function get_os()
-	local fh, _ = assert(io.popen("uname -o 2>/dev/null","r"))
+    local fh, _ = assert(io.popen("uname -o 2>/dev/null", "r"))
     local osname
-	if fh then
-		osname = fh:read()
-	end
+    if fh then
+        osname = fh:read()
+    end
 
-	return osname or "Windows"
+    return osname or "Windows"
 end
 
 local function execute(command, background)
-    local background_operator = ''
+    local background_operator = ""
     if background then
-        background_operator = ' &'
+        background_operator = " &"
     end
 
     local handle = io.popen(command .. " 2>&1" .. background_operator)
@@ -24,7 +24,7 @@ local function execute(command, background)
         handle:close()
 
         if result ~= "" then
-            vim.notify("[illustrate.nvim] Error: " .. result, "error")
+            vim.notify("[illustrate.nvim] Error: " .. result, vim.log.levels.ERROR)
         end
     end
 end
@@ -45,9 +45,9 @@ function M.open(filename)
     local os_name = get_os()
     local default_app = Config.options.default_app.svg
 
-    if default_app == 'inkscape' then
+    if default_app == "inkscape" then
         execute("inkscape " .. filename .. " >/dev/null ", true)
-    elseif default_app == 'illustrator' and os_name == 'Darwin' then
+    elseif default_app == "illustrator" and os_name == "Darwin" then
         execute("open -a 'Adobe Illustrator' " .. filename, false)
     end
 end
@@ -127,7 +127,8 @@ function M.extract_path_from_tex_figure_environment()
         -- Search within the figure environment for the includesvg line
         for i = start_line, end_line do
             local line = vim.api.nvim_buf_get_lines(0, i - 1, i, false)[1]
-            local path = line:match("\\include[s]?vg%[?[^%]]*%]?%{(.-)%}") or line:match("\\includegraphics%[?[^%]]*%]?%{(.-)%}")
+            local path = line:match("\\include[s]?vg%[?[^%]]*%]?%{(.-)%}")
+                or line:match("\\includegraphics%[?[^%]]*%]?%{(.-)%}")
             if path then
                 return path
             end

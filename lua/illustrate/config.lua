@@ -13,7 +13,7 @@ local defaults = {
         default = {
             svg = "default.svg",
             ai = "default.ai",
-        }
+        },
     },
     text_templates = {
         svg = {
@@ -37,7 +37,7 @@ local defaults = {
 \end{figure}
             ]],
             md = "![caption]($FILE_PATH)",
-        }
+        },
     },
     default_app = {
         svg = "inkscape",
