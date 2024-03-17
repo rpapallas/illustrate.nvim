@@ -105,6 +105,25 @@ function M.get_template_path()
     return template_file_absolute_path
 end
 
+-- create a name with input string, plus buffer name, plus date and time
+function M.create_document_name(input_string)
+    local buffer_file_name = vim.fn.expand("%:t:r")
+    local date = os.date("%Y-%m-%d-%H-%M-%S")
+
+    -- input string has any extension?
+    if input_string:match("^.+%..+$") then
+        vim.notify("[illustrate.nvim] Filename should not contain an extension", vim.log.levels.ERROR)
+        return
+    end
+
+    -- input string is empty?
+    if input_string == "" then
+        return buffer_file_name .. "-" .. date .. ".svg"
+    else
+        return buffer_file_name .. "-" .. input_string .. "-" .. date .. ".svg"
+    end
+end
+
 function M.create_document(template_path, destination_path)
     execute("cp " .. template_path .. " " .. destination_path, false)
 end

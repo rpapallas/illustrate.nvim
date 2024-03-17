@@ -21,6 +21,10 @@ function M.open_under_cursor()
         return
     end
 
+    if file_path and file_path:sub(1, 1) ~= "/" and file_path:sub(1, 1) ~= "~" then
+        local current_file_path = vim.fn.expand("%:p:h")
+        file_path = current_file_path .. "/" .. file_path
+    end
     if file_path then
         utils.open(file_path)
     else
@@ -29,11 +33,8 @@ function M.open_under_cursor()
 end
 
 function M.create_and_open_svg()
-    local filename = vim.fn.input("[SVG] Filename (w/o extension): ") .. ".svg"
-    if filename == ".svg" then
-        vim.notify("[illustrate.nvim] Invalid filename", vim.log.levels.ERROR)
-        return
-    end
+    local filename = utils.create_document_name(vim.fn.input("[SVG] Filename (w/o extension): "))
+
     local output_file_absolute_path, output_is_relative = utils.get_output_path(filename)
     local template_file_absolute_path = utils.get_template_path()
     if not template_file_absolute_path then
