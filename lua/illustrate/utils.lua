@@ -29,18 +29,6 @@ local function execute(command, background)
     end
 end
 
-local function copy_template(template_path, filename)
-    local illustration_dir_path = Config.options.illustration_dir
-    local destination_path = illustration_dir_path .. "/" .. filename
-    execute("cp " .. template_path .. " " .. destination_path, false)
-    return destination_path
-end
-
-local function create_illustration_dir()
-    local illustration_dir_path = Config.options.illustration_dir
-    execute("mkdir -p " .. illustration_dir_path, false)
-end
-
 function M.open(filename)
     local os_name = get_os()
     local default_app = Config.options.default_app.svg
@@ -86,11 +74,39 @@ function M.insert_include_code(filename)
     end
 end
 
-function M.create_document(filename, template_path)
-    -- Create illustration dir if not exists.
-    create_illustration_dir()
-    local destination_filename = copy_template(template_path, filename)
-    return destination_filename
+-- get output path for the file and create the directory if it doesn't exist
+function M.get_output_path(file_name)
+    local current_file_path = vim.fn.expand("%:p:h")
+    local is_relative = false
+    local output_file_absolute_path = Config.options.illustration_dir
+    if Config.options.illustration_dir:sub(1, 1) == "~" then
+        output_file_absolute_path = vim.fn.expand("~") .. Config.options.illustration_dir:sub(2)
+    end
+    if Config.options.illustration_dir:sub(1, 1) ~= "/" then
+        output_file_absolute_path = current_file_path .. "/" .. Config.options.illustration_dir
+        is_relative = true
+    end
+
+    if not vim.fn.isdirectory(output_file_absolute_path) then
+        execute("mkdir -p " .. output_file_absolute_path, false)
+    end
+
+    return output_file_absolute_path .. "/" .. file_name, is_relative
+end
+
+-- get the template path for the file, returns nil if the file doesn't exist
+function M.get_template_path()
+    local template_files = Config.options.template_files
+    local template_file_absolute_path = template_files.directory.svg .. template_files.default.svg
+    if not vim.fn.filereadable(template_file_absolute_path) then
+        template_file_absolute_path = nil
+    end
+
+    return template_file_absolute_path
+end
+
+function M.create_document(template_path, destination_path)
+    execute("cp " .. template_path .. " " .. destination_path, false)
 end
 
 function M.extract_path_from_tex_figure_environment()

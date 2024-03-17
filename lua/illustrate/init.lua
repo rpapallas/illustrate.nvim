@@ -30,11 +30,26 @@ end
 
 function M.create_and_open_svg()
     local filename = vim.fn.input("[SVG] Filename (w/o extension): ") .. ".svg"
-    local template_files = Config.options.template_files
-    local template_path = template_files.directory.svg .. template_files.default.svg
-    local new_document_path = utils.create_document(filename, template_path)
-    utils.insert_include_code(new_document_path)
-    utils.open(new_document_path)
+    if filename == ".svg" then
+        vim.notify("[illustrate.nvim] Invalid filename", vim.log.levels.ERROR)
+        return
+    end
+    local output_file_absolute_path, output_is_relative = utils.get_output_path(filename)
+    local template_file_absolute_path = utils.get_template_path()
+    if not template_file_absolute_path then
+        vim.notify("[illustrate.nvim] No default SVG template found", vim.log.levels.ERROR)
+        return
+    end
+
+    utils.create_document(template_file_absolute_path, output_file_absolute_path)
+
+    utils.open(output_file_absolute_path)
+
+    if output_is_relative then
+        utils.insert_include_code(Config.options.illustration_dir .. "/" .. filename)
+    else
+        utils.insert_include_code(output_file_absolute_path)
+    end
 end
 
 function M.create_and_open_ai()
