@@ -26,7 +26,7 @@ function M.open_under_cursor()
         file_path = current_file_path .. "/" .. file_path
     end
     if file_path then
-        utils.open(file_path)
+        utils.open_file_in_vector_program(file_path)
     else
         vim.notify("[illustrate.nvim] No figure environment found under cursor", vim.log.levels.INFO)
     end
@@ -42,24 +42,15 @@ function M.create_and_open_svg()
         return
     end
 
-    utils.create_document(template_file_absolute_path, output_file_absolute_path)
+    utils.create_new_file(template_file_absolute_path, output_file_absolute_path)
 
-    utils.open(output_file_absolute_path)
+    utils.open_file_in_vector_program(output_file_absolute_path)
 
     if output_is_relative then
         utils.insert_include_code(Config.options.illustration_dir .. "/" .. filename)
     else
         utils.insert_include_code(output_file_absolute_path)
     end
-end
-
-function M.create_and_open_ai()
-    local filename = vim.fn.input("[AI] Filename (w/o extension): ") .. ".ai"
-    local template_files = Config.options.template_files
-    local template_path = template_files.directory.ai .. template_files.default.ai
-    local new_document_path = utils.create_document(filename, template_path)
-    utils.insert_include_code(new_document_path)
-    utils.open(new_document_path)
 end
 
 return M

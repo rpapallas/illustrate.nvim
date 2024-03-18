@@ -29,7 +29,7 @@ local function execute(command, background)
     end
 end
 
-function M.open(filename)
+function M.open_file_in_vector_program(filename)
     local os_name = get_os()
     local default_app = Config.options.default_app.svg
     local current_os_user = vim.loop.os_getenv("USER")
@@ -123,11 +123,11 @@ function M.create_document_name(input_string)
     if input_string == "" then
         return buffer_file_name .. "-" .. date .. ".svg"
     else
-        return buffer_file_name .. "-" .. input_string .. "-" .. date .. ".svg"
+        return buffer_file_name .. "-" .. date .. "-" .. input_string .. ".svg"
     end
 end
 
-function M.create_document(template_path, destination_path)
+function M.create_new_file(template_path, destination_path)
     execute("cp " .. template_path .. " " .. destination_path, false)
 end
 
