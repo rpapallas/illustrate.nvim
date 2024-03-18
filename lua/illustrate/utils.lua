@@ -32,8 +32,11 @@ end
 function M.open(filename)
     local os_name = get_os()
     local default_app = Config.options.default_app.svg
+    local current_os_user = vim.loop.os_getenv("USER")
 
-    if default_app == "inkscape" then
+    if default_app == "inkscape" and os_name == "Darwin" then
+        execute("sudo -u " .. current_os_user .. " inkscape " .. filename .. " >/dev/null ", true)
+    elseif default_app == "inkscape" then
         execute("inkscape " .. filename .. " >/dev/null ", true)
     elseif default_app == "illustrator" and os_name == "Darwin" then
         execute("open -a 'Adobe Illustrator' " .. filename, false)
