@@ -44,7 +44,8 @@ function M.open_file_in_vector_program(filename)
 end
 
 function M.insert_include_code(filename, caption)
-    local insert_code = Config.options.text_templates.svg.md:gsub("$FILE_PATH", filename):gsub("$CAPTION", caption)
+    local insert_code =
+        Config.options.text_templates.svg.md:gsub("$FILE_PATH", filename):gsub("$CAPTION", caption .. ".svg")
 
     if insert_code ~= "" then
         local lines = {}
