@@ -33,7 +33,7 @@ function M.open_under_cursor()
 end
 
 function M.create_and_open_svg()
-    local filename = utils.create_document_name(vim.fn.input("[SVG] Filename (w/o extension): "))
+    local filename, abreviation = utils.create_document_name(vim.fn.input("[SVG] Filename (w/o extension): "))
 
     local output_file_absolute_path, output_is_relative = utils.get_output_path(filename)
     local template_file_absolute_path = utils.get_template_path()
@@ -47,9 +47,9 @@ function M.create_and_open_svg()
     utils.open_file_in_vector_program(output_file_absolute_path)
 
     if output_is_relative then
-        utils.insert_include_code(Config.options.illustration_dir .. "/" .. filename)
+        utils.insert_include_code(Config.options.illustration_dir .. "/" .. filename, abreviation)
     else
-        utils.insert_include_code(output_file_absolute_path)
+        utils.insert_include_code(output_file_absolute_path, abreviation)
     end
 end
 

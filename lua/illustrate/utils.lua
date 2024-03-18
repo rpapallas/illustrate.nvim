@@ -43,20 +43,8 @@ function M.open_file_in_vector_program(filename)
     end
 end
 
-function M.insert_include_code(filename)
-    local filetype = vim.bo.filetype
-    local extension = filename:match("^.+%.(%w+)$")
-
-    local insert_code = ""
-    if filetype == "tex" and extension == "svg" then
-        insert_code = Config.options.text_templates.svg.tex:gsub("$FILE_PATH", filename)
-    elseif filetype == "tex" and extension == "ai" then
-        insert_code = Config.options.text_templates.ai.tex:gsub("$FILE_PATH", filename)
-    elseif filetype == "markdown" and extension == "svg" then
-        insert_code = Config.options.text_templates.svg.md:gsub("$FILE_PATH", filename)
-    elseif filetype == "markdown" and extension == "ai" then
-        insert_code = Config.options.text_templates.ai.md:gsub("$FILE_PATH", filename)
-    end
+function M.insert_include_code(filename, caption)
+    local insert_code = Config.options.text_templates.svg.md:gsub("$FILE_PATH", filename):gsub("$CAPTION", caption)
 
     if insert_code ~= "" then
         local lines = {}
@@ -121,9 +109,9 @@ function M.create_document_name(input_string)
 
     -- input string is empty?
     if input_string == "" then
-        return buffer_file_name .. "-" .. date .. ".svg"
+        return buffer_file_name .. "-" .. date .. ".svg", "undefined"
     else
-        return buffer_file_name .. "-" .. date .. "-" .. input_string .. ".svg"
+        return buffer_file_name .. "-" .. date .. "-" .. input_string .. ".svg", input_string
     end
 end
 

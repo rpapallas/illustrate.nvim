@@ -8,40 +8,18 @@ local defaults = {
     template_files = {
         directory = {
             svg = templates_dir .. "/svg/",
-            ai = templates_dir .. "/ai/",
         },
         default = {
             svg = "default.svg",
-            ai = "default.ai",
         },
     },
     text_templates = {
         svg = {
-            tex = [[
-\begin{figure}[h]
-  \centering
-  \includesvg[width=0.8\textwidth]{$FILE_PATH}
-  \caption{Caption}
-  \label{fig:}
-\end{figure}
-            ]],
-            md = "![caption]($FILE_PATH)",
-        },
-        ai = {
-            tex = [[
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.8\linewidth]{$FILE_PATH}
-  \caption{Caption}
-  \label{fig:}
-\end{figure}
-            ]],
-            md = "![caption]($FILE_PATH)",
+            md = "![$CAPTION]($FILE_PATH)",
         },
     },
     default_app = {
         svg = "inkscape",
-        ai = "inkscape",
     },
 }
 
