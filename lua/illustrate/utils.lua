@@ -147,4 +147,9 @@ function M.get_all_illustration_files()
     return files
 end
 
+function M.copy(source, destination)
+    return execute("cp " .. source .. " " .. destination, false)
+end
+
+
 return M

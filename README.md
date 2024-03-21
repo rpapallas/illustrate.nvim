@@ -32,6 +32,10 @@ Illustrator. The example key binding below is `<leader>io`.
 search through the available `.svg` and `.ai` documents in your current working
 directory and open them in Inkscape or Adobe Illustrator. The example key
 binding below is `<leader>if`.
+* By using [telescope](https://github.com/nvim-telescope/telescope.nvim), you can
+search through the available `.svg` and `.ai` documents in your current working
+directory, create a copy of one with a new name, and open the new copy in Inkscape or 
+Adobe Illustrator. The example key binding below is `<leader>ic`.
 
 The plugin currently supports macOS and Linux only, but I am open to add
 support for Windows too. I am happy to accept merge requests on this matter, I 
@@ -76,6 +80,11 @@ return {
                 "<leader>if",
                 function() illustrate_finder.search_and_open() end,
                 desc = "Use telescope to search and open illustrations in default app."
+            },
+            {
+                "<leader>ic",
+                function() illustrate_finder.search_create_copy_and_open() end,
+                desc = "Use telescope to search existing file, copy it with new name, and open it in default app."
             },
         }
     end,
