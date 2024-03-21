@@ -3,13 +3,13 @@ local Config = require("illustrate.config")
 vim.notify = require("notify")
 
 local function get_os()
-	local fh, _ = assert(io.popen("uname -o 2>/dev/null","r"))
+    local fh, _ = assert(io.popen("uname -o 2>/dev/null","r"))
     local osname
-	if fh then
-		osname = fh:read()
-	end
+    if fh then
+        osname = fh:read()
+    end
 
-	return osname or "Windows"
+    return osname or "Windows"
 end
 
 local function execute(command, background)
