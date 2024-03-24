@@ -1,7 +1,26 @@
+vim.notify = require("notify")
 local M = {}
 
 M.namespace = vim.api.nvim_create_namespace("illustrate")
-local templates_dir = vim.fn.stdpath("data") .. "/lazy/illustrate.nvim/templates"
+
+local function get_plugin_path()
+    local stack_info = debug.getinfo(2, "S")
+    local file_path = stack_info.source
+
+    if file_path:sub(1, 1) == "@" then
+        file_path = file_path:sub(2)
+    end
+
+    local lua_index = file_path:find('/lua/')
+    
+    if lua_index then
+        return file_path:sub(1, lua_index - 1)
+    else
+        return nil
+    end
+end
+
+local templates_dir = get_plugin_path() .. "/templates"
 
 local defaults = {
     illustration_dir = "figures",
