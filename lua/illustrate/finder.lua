@@ -55,7 +55,9 @@ function M.search_create_copy_and_open()
             actions.select_default:replace(function()
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()
-                local new_name = vim.fn.input("New filename (w/o extension): ") .. ".svg"
+                local file_extension = selection.value:match("^.+(%..+)$")
+
+                local new_name = vim.fn.input("New filename (w/o extension): ") .. file_extension
                 local illustration_dir_path = Config.options.illustration_dir
                 local destination_path = illustration_dir_path .. "/" .. new_name
                 local source_path = selection.value
