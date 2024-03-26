@@ -2,6 +2,37 @@ local M = {}
 local Config = require("illustrate.config")
 vim.notify = require("notify")
 
+function get_path_to_illustration_dir()
+    local directory_name = Config.options.illustration_dir
+
+    local function directory_exists(path)
+        return vim.fn.isdirectory(path .. "/" .. directory_name) == 1
+    end
+
+    local function search_in_parent_directories(path)
+        local parent_directory = vim.fn.fnamemodify(path, ":h")
+        if path == parent_directory then
+            return nil  -- Reached root directory, return nil
+        elseif directory_exists(path) then
+            return path .. "/" .. directory_name
+        else
+            return search_in_parent_directories(parent_directory)
+        end
+    end
+
+    local current_file_path = vim.fn.expand("%:p:h")
+
+
+    -- Search for the directory in the current working directory
+    if directory_exists(vim.fn.getcwd()) then
+        return vim.fn.getcwd() .. "/" .. directory_name
+    end
+
+    -- Search for the directory in the directory of the file being edited and its parent directories
+    return search_in_parent_directories(current_file_path)
+end
+
+
 local function get_os()
     local fh, _ = assert(io.popen("uname -o 2>/dev/null","r"))
     local osname
@@ -30,15 +61,43 @@ local function execute(command, background)
 end
 
 local function copy_template(template_path, filename)
-    local illustration_dir_path = Config.options.illustration_dir
-    local destination_path = illustration_dir_path .. "/" .. filename
-    execute("cp " .. template_path .. " " .. destination_path, false)
-    return destination_path
+    execute("cp " .. template_path .. " " .. filename, false)
 end
 
 local function create_illustration_dir()
-    local illustration_dir_path = Config.options.illustration_dir
-    execute("mkdir -p " .. illustration_dir_path, false)
+    local cwd = vim.fn.getcwd()
+    local illustration_dir = Config.options.illustration_dir
+
+    -- Function to check if the directory path contains "sections" or "chapters"
+    local function has_excluded_directories(path)
+        for _, name in ipairs(Config.options.directories_to_avoid_creating_illustration_dir_in) do
+            if path:match('/' .. name) then
+                return true
+            end
+        end
+
+        return false
+    end
+
+    local function get_parent_without_excluded_directories(path)
+        local parent_dir = vim.fn.fnamemodify(path, ":h")
+        if not has_excluded_directories(parent_dir) then
+            return parent_dir
+        else
+            return get_parent_without_excluded_directories(parent_dir)
+        end
+    end
+
+    local parent_without_excluded_directories = cwd
+    if has_excluded_directories(cwd) then
+        parent_without_excluded_directories = get_parent_without_excluded_directories(cwd)
+        return
+    end
+
+    local figures_dir = parent_without_excluded_directories .. '/' .. illustration_dir
+    vim.fn.mkdir(figures_dir, "p")
+    vim.notify("Directory created under: " .. figures_dir)
+    return figures_dir
 end
 
 function M.open(filename)
@@ -87,10 +146,14 @@ function M.insert_include_code(filename)
 end
 
 function M.create_document(filename, template_path)
-    -- Create illustration dir if not exists.
-    create_illustration_dir()
-    local destination_filename = copy_template(template_path, filename)
-    return destination_filename
+    local directory_path = get_path_to_illustration_dir()
+    if not directory_path then
+        directory_path = create_illustration_dir()
+    end
+
+    local file_path = directory_path .. '/' .. filename
+    copy_template(template_path, file_path)
+    return file_path
 end
 
 function M.extract_path_from_tex_figure_environment()

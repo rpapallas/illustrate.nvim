@@ -52,12 +52,14 @@ function M.open_under_cursor()
     end
 end
 
+
 function M.create_and_open_svg()
     local filename = vim.fn.input("[SVG] Filename (w/o extension): ") .. ".svg"
     local template_files = Config.options.template_files
     local template_path = template_files.directory.svg .. template_files.default.svg
     local new_document_path = utils.create_document(filename, template_path)
-    utils.insert_include_code(new_document_path)
+    local relatie_path = new_document_path:match(Config.options.illustration_dir .. "/[^/]+$")
+    utils.insert_include_code(relatie_path)
     utils.open(new_document_path)
 end
 
@@ -66,7 +68,8 @@ function M.create_and_open_ai()
     local template_files = Config.options.template_files
     local template_path = template_files.directory.ai .. template_files.default.ai
     local new_document_path = utils.create_document(filename, template_path)
-    utils.insert_include_code(new_document_path)
+    local relatie_path = new_document_path:match(Config.options.illustration_dir .. "/[^/]+$")
+    utils.insert_include_code(relatie_path)
     utils.open(new_document_path)
 end
 
