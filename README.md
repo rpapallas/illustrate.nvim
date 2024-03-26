@@ -127,6 +127,10 @@ The default options (that you can override in `opts`) are:
 
 ```lua
 illustration_dir = "figures",
+directories_to_avoid_creating_illustration_dir_in = {
+    'sections',
+    'chapters',
+},
 template_files = { -- Templates used when new vector documents are created.
     -- You can optionally define a path to your own template dir and
     -- bootstrap your documents with a better template than an empty 
@@ -169,6 +173,13 @@ default_app = { -- default software to use for opening ai/svg files.
     ai = "inkscape", -- Options: inkscape/illustrator
 },
 ```
+
+* The `directories_to_avoid_creating_illustration_dir_in` points sub-directory names that the
+  plugin should *avoid* creating an `illustration_dir` in. When an `illustration_dir` (e.g., `figures`)
+  isn't found in cwd or parent directory, the plugin will attempt to create one in 
+  the best place possible. By default it will avoid creating such a directory
+  in `sections` and `chapters` subdirectories and it will create one in a parent
+  directory immidietly above a `sections` or `chapters`.
 
 ## Using `.svg` and `.ai` files directly in LaTeX
 

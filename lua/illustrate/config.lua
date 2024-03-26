@@ -24,6 +24,10 @@ local templates_dir = get_plugin_path() .. "/templates"
 
 local defaults = {
     illustration_dir = "figures",
+    directories_to_avoid_creating_illustration_dir_in = {
+        'sections',
+        'chapters',
+    },
     template_files = {
         directory = {
             svg = templates_dir .. "/svg/",
