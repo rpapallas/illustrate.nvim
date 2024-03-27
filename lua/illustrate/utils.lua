@@ -70,8 +70,13 @@ local function create_illustration_dir()
 
     -- Function to check if the directory path contains "sections" or "chapters"
     local function has_excluded_directories(path)
+        local normalized_path = path:gsub("\\", "/")
+
         for _, name in ipairs(Config.options.directories_to_avoid_creating_illustration_dir_in) do
-            if path:match('/' .. name) then
+            if string.find(normalized_path, "/" .. name .. "/") or
+               string.match(normalized_path, "^" .. name .. "/") or
+               string.match(normalized_path, "/" .. name .. "$") or
+               normalized_path == name then
                 return true
             end
         end
@@ -91,7 +96,6 @@ local function create_illustration_dir()
     local parent_without_excluded_directories = cwd
     if has_excluded_directories(cwd) then
         parent_without_excluded_directories = get_parent_without_excluded_directories(cwd)
-        return
     end
 
     local figures_dir = parent_without_excluded_directories .. '/' .. illustration_dir
@@ -150,6 +154,7 @@ function M.create_document(filename, template_path)
     if not directory_path then
         directory_path = create_illustration_dir()
     end
+    vim.notify(directory_path)
 
     local file_path = directory_path .. '/' .. filename
     copy_template(template_path, file_path)

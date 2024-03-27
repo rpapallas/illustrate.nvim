@@ -52,7 +52,6 @@ function M.open_under_cursor()
     end
 end
 
-
 function M.create_and_open_svg()
     local filename = vim.fn.input("[SVG] Filename (w/o extension): ") .. ".svg"
     local template_files = Config.options.template_files
