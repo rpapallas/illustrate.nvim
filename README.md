@@ -197,6 +197,18 @@ LaTeX project:
 
 then you can include it like so: `\includegraphics[\linewidth]{figures/figure.ai}`.
 
+You can see example projects [here](examples/).
+
+## Examples
+
+You may be interested in using this plugin with different project structure.
+For example, you may want to have a figures directory for each chapter/section
+in your latex project. You can see different use cases of this plugin in the
+examples directory [here](examples/). A detailed README in there will provide
+more insights of how to use this plugin for each of your use case.
+
+If something isn't covered in the examples, please open an issue and let me know.
+
 ## Contributions, feedback and requests
 
 Happy to accept contributions/pull requests to extend and improve this simple 
