@@ -1,5 +1,6 @@
 local uuid = require("uuid")
 local utils = require('illustrate.utils')
+local illustrate = require('illustrate')
 
 describe('test get_path_to_illustration_dir', function()
     it('should return nil if no figures dir exists', function()
@@ -58,5 +59,18 @@ describe('test get_path_to_illustration_dir', function()
     end)
 end)
 
-describe('test get_path_to_illustration_dir', function()
+describe('test create_and_open_svg', function()
+    it('create new svg without figures', function()
+        local unique_number = uuid()
+        local root_path = '/tmp/' .. unique_number
+        local file_name = 'test'
+        local file_path = root_path .. '/figures/' .. file_name .. '.svg'
+        os.execute('mkdir -p ' .. root_path)
+
+        vim.api.nvim_command("edit " .. root_path .. '/test.tex')
+        illustrate.create_and_open_svg(file_name)
+        local file = io.open(file_path, "r")
+        assert.is.truthy(file)
+        file:close()
+    end)
 end)

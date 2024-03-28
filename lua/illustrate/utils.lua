@@ -64,7 +64,7 @@ local function copy_template(template_path, filename)
 end
 
 local function create_illustration_dir()
-    local cwd = vim.fn.getcwd()
+    local current_file_path = vim.fn.expand("%:p:h")
     local illustration_dir = Config.options.illustration_dir
 
     -- Function to check if the directory path contains "sections" or "chapters"
@@ -92,9 +92,9 @@ local function create_illustration_dir()
         end
     end
 
-    local parent_without_excluded_directories = cwd
-    if has_excluded_directories(cwd) then
-        parent_without_excluded_directories = get_parent_without_excluded_directories(cwd)
+    local parent_without_excluded_directories = current_file_path
+    if has_excluded_directories(current_file_path) then
+        parent_without_excluded_directories = get_parent_without_excluded_directories(current_file_path)
     end
 
     local figures_dir = parent_without_excluded_directories .. '/' .. illustration_dir

@@ -23,9 +23,46 @@ local function create_documenmt(filename, type)
     return utils.create_document(filename, template_path)
 end
 
+function extractRelevantSubPath(path)
+    -- Splits the path into components
+    local components = {}
+    for component in string.gmatch(path, "[^/]+") do
+        table.insert(components, component)
+    end
+
+    -- Find the index where "chapters", "sections", or "figures" directory appears
+    local targetIndex = nil
+    local isFiguresPresent = false
+    for i, component in ipairs(components) do
+        if component == "chapters" or component == "sections" then
+            targetIndex = i
+            break
+        elseif component == "figures" then
+            isFiguresPresent = true -- Mark if "figures" is present in the path
+        end
+    end
+
+    -- If neither "chapters" nor "sections" were found, but "figures" was, return "figures/"
+    if not targetIndex and isFiguresPresent then
+        return "figures" .. '/' .. components[#components]
+    elseif not targetIndex then
+        return "" -- Return an empty string if none of the keywords were found
+    end
+
+    -- Reconstruct the desired sub-path starting from the identified point
+    local subPathParts = {}
+    for i = targetIndex, #components do
+        table.insert(subPathParts, components[i])
+    end
+
+    return table.concat(subPathParts, "/")
+end
+
+
 local function create_and_open(new_file_name, type)
+    new_file_name = new_file_name .. '.' .. type
     local new_document_path = create_documenmt(new_file_name, type)
-    local relative_path = new_document_path:match(Config.options.illustration_dir .. "/[^/]+$")
+    local relative_path = extractRelevantSubPath(new_document_path)
     utils.insert_include_code(relative_path)
     utils.open(new_document_path)
 end
@@ -76,15 +113,15 @@ end
 
 function M.create_and_open_svg(new_file_name)
     if new_file_name == nil then
-        new_file_name = vim.fn.input("[SVG] Filename (w/o extension): ") .. ".svg"
+        new_file_name = vim.fn.input("[SVG] Filename (w/o extension): ")
     end
 
-    create_and_open(new_file_name, 'ai')
+    create_and_open(new_file_name, 'svg')
 end
 
 function M.create_and_open_ai(new_file_name)
     if new_file_name == nil then
-        new_file_name = vim.fn.input("[AI] Filename (w/o extension): ") .. ".ai"
+        new_file_name = vim.fn.input("[AI] Filename (w/o extension): ")
     end
 
     create_and_open(new_file_name, 'ai')
