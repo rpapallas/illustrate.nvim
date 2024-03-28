@@ -1,76 +1,97 @@
 local uuid = require("uuid")
-local utils = require('illustrate.utils')
+local lfs = require("lfs")
 local illustrate = require('illustrate')
 
-describe('test get_path_to_illustration_dir', function()
-    it('should return nil if no figures dir exists', function()
-        local unique_number = uuid()
-        local root_path = '/tmp/' .. unique_number
-
-        vim.api.nvim_command('edit ' .. root_path .. '/test.tex')
-        assert.are.same(utils.get_path_to_illustration_dir(), nil)
-    end)
-
-    it('should return /figures if figures in root exists while editing a file in root', function()
-        local unique_number = uuid()
-        local root_path = '/tmp/' .. unique_number
-
-        os.execute('mkdir -p ' .. root_path .. '/figures')
-        vim.api.nvim_command("edit " .. root_path .. '/test.tex')
-        assert.are.same(utils.get_path_to_illustration_dir(), root_path .. '/figures')
-    end)
-
-    it('should return /sections/figures if figures in sections while editing a file in sections', function()
-        local unique_number = uuid()
-        local root_path = '/tmp/' .. unique_number
-
-        os.execute('mkdir -p ' .. root_path .. '/sections/figures')
-        vim.api.nvim_command("edit " .. root_path .. '/sections/test.tex')
-        assert.are.same(utils.get_path_to_illustration_dir(), root_path .. '/sections/figures')
-    end)
-
-    it('`figures` in `sections`, editing a file in root, returns the nil', function()
-        local unique_number = uuid()
-        local root_path = '/tmp/' .. unique_number
-
-        os.execute('mkdir -p ' .. root_path .. '/sections/figures')
-        vim.api.nvim_command("edit " .. root_path .. '/test.tex')
-        assert.are.same(utils.get_path_to_illustration_dir(), nil)
-    end)
-
-    it('two `figures` (`root` and `sections`), editing a file in root, returns the `/figures`', function()
-        local unique_number = uuid()
-        local root_path = '/tmp/' .. unique_number
-
-        os.execute('mkdir -p ' .. root_path .. '/sections/figures')
-        os.execute('mkdir -p ' .. root_path .. '/figures')
-        vim.api.nvim_command("edit " .. root_path .. '/test.tex')
-        assert.are.same(utils.get_path_to_illustration_dir(), root_path .. '/figures')
-    end)
-
-    it('two `figures` (`root` and `sections`), editing a file in `sections`, returns the `sections/figures`', function()
-        local unique_number = uuid()
-        local root_path = '/tmp/' .. unique_number
-
-        os.execute('mkdir -p ' .. root_path .. '/sections/figures')
-        os.execute('mkdir -p ' .. root_path .. '/figures')
-        vim.api.nvim_command("edit " .. root_path .. '/sections/test.tex')
-        assert.are.same(utils.get_path_to_illustration_dir(), root_path .. '/sections/figures')
-    end)
-end)
-
 describe('test create_and_open_svg', function()
-    it('create new svg without figures', function()
+    local function generate_paths(svg_file_name, figures_path)
         local unique_number = uuid()
         local root_path = '/tmp/' .. unique_number
-        local file_name = 'test'
-        local file_path = root_path .. '/figures/' .. file_name .. '.svg'
-        os.execute('mkdir -p ' .. root_path)
+        lfs.mkdir(root_path)
+
+        local figures_full_path = root_path .. '/' .. figures_path
+        local svg_expected_path =  figures_full_path .. '/' .. svg_file_name .. '.svg'
+        return root_path, figures_full_path, svg_expected_path
+    end
+
+    local function directory_exists(path)
+        return lfs.attributes(path, "mode") == "directory"
+    end
+
+    local function file_exists(path)
+        return lfs.attributes(path, "mode") == "file"
+    end
+
+    it('should create a new svg in newly created figures dir', function()
+        local svg_file_name = 'test'
+        local root_path, figures_full_path, svg_expected_path = generate_paths(svg_file_name, 'figures')
+
+        assert.is_false(directory_exists(figures_full_path))
+        assert.is_false(file_exists(svg_expected_path))
 
         vim.api.nvim_command("edit " .. root_path .. '/test.tex')
-        illustrate.create_and_open_svg(file_name)
-        local file = io.open(file_path, "r")
-        assert.is.truthy(file)
-        file:close()
+        local was_success = illustrate.create_and_open_svg(svg_file_name)
+
+        assert.is_true(was_success)
+        assert.is_true(directory_exists(figures_full_path))
+        assert.is_true(file_exists(svg_expected_path))
+    end)
+
+    it('should create a new svg under existing figures', function()
+        local svg_file_name = 'test'
+        local root_path, figures_full_path, svg_expected_path = generate_paths(svg_file_name, 'figures')
+        lfs.mkdir(figures_full_path)
+
+        assert.is_true(directory_exists(figures_full_path))
+        assert.is_false(file_exists(svg_expected_path))
+
+        vim.api.nvim_command("edit " .. root_path .. '/test.tex')
+        local was_success = illustrate.create_and_open_svg(svg_file_name)
+
+        assert.is_true(was_success)
+        assert.is_true(file_exists(svg_expected_path))
+    end)
+
+    it('should create a new figures/ under root and a new svg while editing relative to root', function()
+        local svg_file_name = 'test'
+        local root_path, figures_full_path, svg_expected_path = generate_paths(svg_file_name, 'figures')
+
+        assert.is_false(directory_exists(figures_full_path))
+        assert.is_false(file_exists(svg_expected_path))
+
+        vim.api.nvim_command("edit " .. root_path .. '/sections/test.tex')
+        local was_success = illustrate.create_and_open_svg(svg_file_name)
+
+        assert.is_true(was_success)
+        assert.is_true(directory_exists(figures_full_path))
+        assert.is_true(file_exists(svg_expected_path))
+    end)
+
+    it('should save an svg under existing dir in sections', function()
+        local svg_file_name = 'test'
+        local root_path, figures_full_path, svg_expected_path = generate_paths(svg_file_name, 'sections/figures')
+
+        assert.is_false(directory_exists(figures_full_path))
+        assert.is_false(file_exists(svg_expected_path))
+
+        os.execute('mkdir -p ' .. figures_full_path)
+        vim.api.nvim_command("edit " .. root_path .. '/sections/test.tex')
+        local was_success = illustrate.create_and_open_svg(svg_file_name)
+
+        assert.is_true(was_success)
+        assert.is_true(directory_exists(figures_full_path))
+        assert.is_true(file_exists(svg_expected_path))
+    end)
+
+    it('should not create figure with empty name', function()
+        local svg_file_name = ''
+        local root_path, figures_full_path, svg_expected_path = generate_paths(svg_file_name, 'figures')
+
+        assert.is_false(file_exists(svg_expected_path))
+
+        vim.api.nvim_command("edit " .. root_path .. '/test.tex')
+        local was_success = illustrate.create_and_open_svg(svg_file_name)
+
+        assert.is_false(was_success)
+        assert.is_false(file_exists(svg_expected_path))
     end)
 end)
