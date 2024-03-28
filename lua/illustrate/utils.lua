@@ -2,7 +2,7 @@ local M = {}
 local Config = require("illustrate.config")
 vim.notify = require("notify")
 
-function get_path_to_illustration_dir()
+function M.get_path_to_illustration_dir()
     local directory_name = Config.options.illustration_dir
 
     local function directory_exists(path)
@@ -21,7 +21,6 @@ function get_path_to_illustration_dir()
     end
 
     local current_file_path = vim.fn.expand("%:p:h")
-
 
     -- Search for the directory in the current working directory
     if directory_exists(vim.fn.getcwd()) then
@@ -150,11 +149,10 @@ function M.insert_include_code(filename)
 end
 
 function M.create_document(filename, template_path)
-    local directory_path = get_path_to_illustration_dir()
+    local directory_path = M.get_path_to_illustration_dir()
     if not directory_path then
         directory_path = create_illustration_dir()
     end
-    vim.notify(directory_path)
 
     local file_path = directory_path .. '/' .. filename
     copy_template(template_path, file_path)
@@ -218,6 +216,5 @@ end
 function M.copy(source, destination)
     return execute("cp " .. source .. " " .. destination, false)
 end
-
 
 return M
