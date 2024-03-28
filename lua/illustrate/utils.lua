@@ -217,4 +217,13 @@ function M.copy(source, destination)
     return execute("cp " .. source .. " " .. destination, false)
 end
 
+function M.is_in_table(table, value)
+    for _, v in pairs(table) do
+        if v == value then
+            return true
+        end
+    end
+    return false
+end
+
 return M
