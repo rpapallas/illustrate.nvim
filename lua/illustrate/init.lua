@@ -23,18 +23,17 @@ local function create_documenmt(filename, type)
     return utils.create_document(filename, template_path)
 end
 
-function extractRelevantSubPath(path)
-    -- Splits the path into components
+function get_relative_path(path)
     local components = {}
     for component in string.gmatch(path, "[^/]+") do
         table.insert(components, component)
     end
 
-    -- Find the index where "chapters", "sections", or "figures" directory appears
+    -- Find the index where "chapters", "sections", "figures" etc directory appears
     local targetIndex = nil
     local isFiguresPresent = false
     for i, component in ipairs(components) do
-        if component == "chapters" or component == "sections" then
+        if utils.is_in_table(Config.options.directories_to_avoid_creating_illustration_dir_in, component) then
             targetIndex = i
             break
         elseif component == "figures" then
@@ -60,11 +59,17 @@ end
 
 
 local function create_and_open(new_file_name, type)
+    if new_file_name == '' then
+        vim.notify("[illustrate.nvim] Figure name can't be empty.", "error")
+        return false
+    end
+
     new_file_name = new_file_name .. '.' .. type
     local new_document_path = create_documenmt(new_file_name, type)
-    local relative_path = extractRelevantSubPath(new_document_path)
+    local relative_path = get_relative_path(new_document_path)
     utils.insert_include_code(relative_path)
     utils.open(new_document_path)
+    return true
 end
 
 local function extract_path_from_figure()
@@ -116,7 +121,7 @@ function M.create_and_open_svg(new_file_name)
         new_file_name = vim.fn.input("[SVG] Filename (w/o extension): ")
     end
 
-    create_and_open(new_file_name, 'svg')
+    return create_and_open(new_file_name, 'svg')
 end
 
 function M.create_and_open_ai(new_file_name)
