@@ -58,12 +58,14 @@ function M.search_create_copy_and_open()
                 local file_extension = selection.value:match("^.+(%..+)$")
 
                 local new_name = vim.fn.input("New filename (w/o extension): ") .. file_extension
-                local illustration_dir_path = Config.options.illustration_dir
+                local illustration_dir_path = utils.get_path_to_illustration_dir()
                 local destination_path = illustration_dir_path .. "/" .. new_name
                 local source_path = selection.value
 
                 utils.copy(source_path, destination_path)
-                utils.insert_include_code(destination_path)
+
+                local relative_path = utils.get_relative_path(destination_path)
+                utils.insert_include_code(relative_path)
                 utils.open(destination_path)
             end)
             return true

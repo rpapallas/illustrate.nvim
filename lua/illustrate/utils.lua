@@ -202,7 +202,7 @@ function M.extract_path_from_tex_figure_environment()
 end
 
 function M.get_all_illustration_files()
-    local figures_path = vim.fn.getcwd() .. "/" .. Config.options.illustration_dir
+    local figures_path = M.get_path_to_illustration_dir()
     local files = vim.fn.globpath(figures_path, "*.svg", false, true)
     local ai_files = vim.fn.globpath(figures_path, "*.ai", false, true)
 
@@ -225,5 +225,41 @@ function M.is_in_table(table, value)
     end
     return false
 end
+
+
+function M.get_relative_path(path)
+    local components = {}
+    for component in string.gmatch(path, "[^/]+") do
+        table.insert(components, component)
+    end
+
+    -- Find the index where "chapters", "sections", "figures" etc directory appears
+    local targetIndex = nil
+    local isFiguresPresent = false
+    for i, component in ipairs(components) do
+        if M.is_in_table(Config.options.directories_to_avoid_creating_illustration_dir_in, component) then
+            targetIndex = i
+            break
+        elseif component == "figures" then
+            isFiguresPresent = true -- Mark if "figures" is present in the path
+        end
+    end
+
+    -- If neither "chapters" nor "sections" were found, but "figures" was, return "figures/"
+    if not targetIndex and isFiguresPresent then
+        return "figures" .. '/' .. components[#components]
+    elseif not targetIndex then
+        return "" -- Return an empty string if none of the keywords were found
+    end
+
+    -- Reconstruct the desired sub-path starting from the identified point
+    local subPathParts = {}
+    for i = targetIndex, #components do
+        table.insert(subPathParts, components[i])
+    end
+
+    return table.concat(subPathParts, "/")
+end
+
 
 return M

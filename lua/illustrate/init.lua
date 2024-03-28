@@ -23,40 +23,6 @@ local function create_documenmt(filename, type)
     return utils.create_document(filename, template_path)
 end
 
-function get_relative_path(path)
-    local components = {}
-    for component in string.gmatch(path, "[^/]+") do
-        table.insert(components, component)
-    end
-
-    -- Find the index where "chapters", "sections", "figures" etc directory appears
-    local targetIndex = nil
-    local isFiguresPresent = false
-    for i, component in ipairs(components) do
-        if utils.is_in_table(Config.options.directories_to_avoid_creating_illustration_dir_in, component) then
-            targetIndex = i
-            break
-        elseif component == "figures" then
-            isFiguresPresent = true -- Mark if "figures" is present in the path
-        end
-    end
-
-    -- If neither "chapters" nor "sections" were found, but "figures" was, return "figures/"
-    if not targetIndex and isFiguresPresent then
-        return "figures" .. '/' .. components[#components]
-    elseif not targetIndex then
-        return "" -- Return an empty string if none of the keywords were found
-    end
-
-    -- Reconstruct the desired sub-path starting from the identified point
-    local subPathParts = {}
-    for i = targetIndex, #components do
-        table.insert(subPathParts, components[i])
-    end
-
-    return table.concat(subPathParts, "/")
-end
-
 
 local function create_and_open(new_file_name, type)
     if new_file_name == '' then
@@ -66,7 +32,7 @@ local function create_and_open(new_file_name, type)
 
     new_file_name = new_file_name .. '.' .. type
     local new_document_path = create_documenmt(new_file_name, type)
-    local relative_path = get_relative_path(new_document_path)
+    local relative_path = utils.get_relative_path(new_document_path)
     utils.insert_include_code(relative_path)
     utils.open(new_document_path)
     return true
@@ -91,6 +57,9 @@ end
 
 function M.open_under_cursor()
     local file_path = extract_path_from_figure()
+    local filename = string.match(file_path, "([^/]+)$")
+    local illustration_dir = utils.get_path_to_illustration_dir()
+    file_path = illustration_dir .. '/' .. filename
 
     if file_path then
         local open_was_successful = utils.open(file_path)

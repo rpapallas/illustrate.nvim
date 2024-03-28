@@ -14,8 +14,9 @@ LaTeX documents live in, and you have a single figures directory:
 └── main.tex
 ```
 
-illustrate.nvim will create a `figures` directory the next time you attempt
-to create a new figure, if a `figures` directory does not already exists.
+If you edit `main.tex`, illustrate.nvim will create a `figures` directory the
+next time you attempt to create a new figure, if a `figures` directory does not
+already exists.
 
 
 ## Example 1 - Chapters with a figures directory already in root
@@ -93,8 +94,7 @@ of the `chapters` directory manually.
 ```
 
 If you are working on file `objectives.tex` of the introduction chapter but
-you current working directory is the root directory, and figures you attempt
+you current working directory is the root directory, any figures you attempt
 to create using illustrate.nvim will be created inside the `figures` of the
-introduction chapter.
-
-# Markdown
+introduction chapter. illustrate.nvim should also make sure to put the right
+relative path in the figure environment in LaTeX to make this to work.
