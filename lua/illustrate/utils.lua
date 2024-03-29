@@ -1,9 +1,38 @@
 local M = {}
-local Config = require("illustrate.config")
+local config = require("illustrate.config")
 vim.notify = require("notify")
 
+function M.get_path_to_illustration_dir()
+    local directory_name = config.options.illustration_dir
+
+    local function directory_exists(path)
+        return vim.fn.isdirectory(path .. "/" .. directory_name) == 1
+    end
+
+    local function search_in_parent_directories(path)
+        local parent_directory = vim.fn.fnamemodify(path, ":h")
+        if path == parent_directory then
+            return nil  -- Reached root directory, return nil
+        elseif directory_exists(path) then
+            return path .. "/" .. directory_name
+        else
+            return search_in_parent_directories(parent_directory)
+        end
+    end
+
+    local current_file_path = vim.fn.expand("%:p:h")
+
+    -- Search for the directory in the current working directory
+    if directory_exists(vim.fn.getcwd()) then
+        return vim.fn.getcwd() .. "/" .. directory_name
+    end
+
+    -- Search for the directory in the directory of the file being edited and its parent directories
+    return search_in_parent_directories(current_file_path)
+end
+
 local function get_os()
-    local fh, _ = assert(io.popen("uname -o 2>/dev/null", "r"))
+    local fh, _ = assert(io.popen("uname -o 2>/dev/null","r"))
     local osname
     if fh then
         osname = fh:read()
@@ -24,28 +53,109 @@ local function execute(command, background)
         handle:close()
 
         if result ~= "" then
-            vim.notify("[illustrate.nvim] Error: " .. result, vim.log.levels.ERROR)
+            -- Avoid showing the error if it is "file not found" because we will 
+            -- prompt to user to create it if not found.
+            local start_index, _ = string.find(result, 'does not exist')
+            if not start_index then
+                vim.notify("[illustrate.nvim] Error: " .. result, vim.log.levels.ERROR)
+            end
+            return false
         end
     end
+
+    return true
+end
+
+local function copy_template(template_path, filename)
+    execute("cp " .. template_path .. " " .. filename, false)
+end
+
+local function create_illustration_dir()
+    local current_file_path = vim.fn.expand("%:p:h")
+    local illustration_dir = config.options.illustration_dir
+
+    -- Function to check if the directory path contains "sections" or "chapters"
+    local function has_excluded_directories(path)
+        local normalized_path = path:gsub("\\", "/")
+
+        for _, name in ipairs(config.options.directories_to_avoid_creating_illustration_dir_in) do
+            if string.find(normalized_path, "/" .. name .. "/") or
+               string.match(normalized_path, "^" .. name .. "/") or
+               string.match(normalized_path, "/" .. name .. "$") or
+               normalized_path == name then
+                return true
+            end
+        end
+
+        return false
+    end
+
+    local function get_parent_without_excluded_directories(path)
+        local parent_dir = vim.fn.fnamemodify(path, ":h")
+        if not has_excluded_directories(parent_dir) then
+            return parent_dir
+        else
+            return get_parent_without_excluded_directories(parent_dir)
+        end
+    end
+
+    local parent_without_excluded_directories = current_file_path
+    if has_excluded_directories(current_file_path) then
+        parent_without_excluded_directories = get_parent_without_excluded_directories(current_file_path)
+    end
+
+    local figures_dir = parent_without_excluded_directories .. '/' .. illustration_dir
+    vim.fn.mkdir(figures_dir, "p")
+    vim.notify("Directory created under: " .. figures_dir)
+    return figures_dir
 end
 
 function M.open_file_in_vector_program(filename)
     local os_name = get_os()
-    local default_app = Config.options.default_app.svg
-    local current_os_user = vim.loop.os_getenv("USER")
 
-    if default_app == "inkscape" and os_name == "Darwin" then
-        execute("sudo -u " .. current_os_user .. " inkscape " .. filename .. " >/dev/null ", true)
-    elseif default_app == "inkscape" then
-        execute("inkscape " .. filename .. " >/dev/null ", true)
-    elseif default_app == "illustrator" and os_name == "Darwin" then
-        execute("open -a 'Adobe Illustrator' " .. filename, false)
+    local default_app = nil
+    if filename:match("%.ai$") then
+        default_app = config.options.default_app.ai
+    elseif filename:match("%.svg$") then
+        default_app = config.options.default_app.svg
+    else
+        vim.notify("[illustrate.nvim] can't open file in vector program; filetype not supported.", vim.log.levels.ERROR)
+        return
+    end
+
+    if default_app == 'inkscape' then
+        return execute("inkscape " .. filename .. " >/dev/null ", true)
+    elseif default_app == 'illustrator' and os_name == 'Darwin' then
+        return execute("open -a 'Adobe Illustrator' " .. filename, false)
     end
 end
 
-function M.insert_include_code(filename, caption)
-    local insert_code =
-        Config.options.text_templates.svg.md:gsub("$FILE_PATH", filename):gsub("$CAPTION", caption .. ".svg")
+function M.insert_include_code(filename, caption, label)
+    local filetype = vim.bo.filetype
+    local extension = filename:match("^.+%.(%w+)$")
+
+    local insert_code = ""
+    if filetype == "tex" and extension == "svg" then
+        insert_code = config.options.text_templates.svg.tex:gsub("$FILE_PATH", filename)
+    elseif filetype == "tex" and extension == "ai" then
+        insert_code = config.options.text_templates.ai.tex:gsub("$FILE_PATH", filename)
+    elseif filetype == "markdown" and extension == "svg" then
+        insert_code = config.options.text_templates.svg.md:gsub("$FILE_PATH", filename)
+    elseif filetype == "markdown" and extension == "ai" then
+        insert_code = config.options.text_templates.ai.md:gsub("$FILE_PATH", filename)
+    end
+
+    if caption then
+        insert_code = insert_code:gsub("$CAPTION", caption)
+    else
+        insert_code = insert_code:gsub("$CAPTION", 'CAPTION HERE')
+    end
+
+    if label then
+        insert_code = insert_code:gsub("$LABEL", label)
+    else
+        insert_code = insert_code:gsub("$LABEL", 'fig:label-here')
+    end
 
     if insert_code ~= "" then
         local lines = {}
@@ -55,9 +165,11 @@ function M.insert_include_code(filename, caption)
 
         local line_count = vim.api.nvim_buf_line_count(0)
         local current_line, _ = unpack(vim.api.nvim_win_get_cursor(0))
+
         if current_line > line_count then
             current_line = line_count
         end
+
         if current_line == 0 then
             current_line = 1
         end
@@ -66,58 +178,15 @@ function M.insert_include_code(filename, caption)
     end
 end
 
--- get output path for the file and create the directory if it doesn't exist
-function M.get_output_path(file_name)
-    local current_file_path = vim.fn.expand("%:p:h")
-    local is_relative = false
-    local output_file_absolute_path = Config.options.illustration_dir
-    if Config.options.illustration_dir:sub(1, 1) == "~" then
-        output_file_absolute_path = vim.fn.expand("~") .. Config.options.illustration_dir:sub(2)
-    end
-    if Config.options.illustration_dir:sub(1, 1) ~= "/" then
-        output_file_absolute_path = current_file_path .. "/" .. Config.options.illustration_dir
-        is_relative = true
+function M.create_document(filename, template_path)
+    local directory_path = M.get_path_to_illustration_dir()
+    if not directory_path then
+        directory_path = create_illustration_dir()
     end
 
-    if not vim.fn.isdirectory(output_file_absolute_path) then
-        execute("mkdir -p " .. output_file_absolute_path, false)
-    end
-
-    return output_file_absolute_path .. "/" .. file_name, is_relative
-end
-
--- get the template path for the file, returns nil if the file doesn't exist
-function M.get_template_path()
-    local template_files = Config.options.template_files
-    local template_file_absolute_path = template_files.directory.svg .. template_files.default.svg
-    if not vim.fn.filereadable(template_file_absolute_path) then
-        template_file_absolute_path = nil
-    end
-
-    return template_file_absolute_path
-end
-
--- create a name with input string, plus buffer name, plus date and time
-function M.create_document_name(input_string)
-    local buffer_file_name = vim.fn.expand("%:t:r")
-    local date = os.date("%Y-%m-%d-%H-%M-%S")
-
-    -- input string has any extension?
-    if input_string:match("^.+%..+$") then
-        vim.notify("[illustrate.nvim] Filename should not contain an extension", vim.log.levels.ERROR)
-        return
-    end
-
-    -- input string is empty?
-    if input_string == "" then
-        return buffer_file_name .. "-" .. date .. ".svg", "undefined"
-    else
-        return buffer_file_name .. "-" .. date .. "-" .. input_string .. ".svg", input_string
-    end
-end
-
-function M.create_new_file(template_path, destination_path)
-    execute("cp " .. template_path .. " " .. destination_path, false)
+    local file_path = directory_path .. '/' .. filename
+    copy_template(template_path, file_path)
+    return file_path
 end
 
 function M.extract_path_from_tex_figure_environment()
@@ -154,8 +223,7 @@ function M.extract_path_from_tex_figure_environment()
         -- Search within the figure environment for the includesvg line
         for i = start_line, end_line do
             local line = vim.api.nvim_buf_get_lines(0, i - 1, i, false)[1]
-            local path = line:match("\\include[s]?vg%[?[^%]]*%]?%{(.-)%}")
-                or line:match("\\includegraphics%[?[^%]]*%]?%{(.-)%}")
+            local path = line:match("\\include[s]?vg%[?[^%]]*%]?%{(.-)%}") or line:match("\\includegraphics%[?[^%]]*%]?%{(.-)%}")
             if path then
                 return path
             end
@@ -164,7 +232,7 @@ function M.extract_path_from_tex_figure_environment()
 end
 
 function M.get_all_illustration_files()
-    local figures_path = vim.fn.getcwd() .. "/" .. Config.options.illustration_dir
+    local figures_path = M.get_path_to_illustration_dir()
     local files = vim.fn.globpath(figures_path, "*.svg", false, true)
     local ai_files = vim.fn.globpath(figures_path, "*.ai", false, true)
 
@@ -173,6 +241,53 @@ function M.get_all_illustration_files()
     end
 
     return files
+end
+
+function M.copy(source, destination)
+    return execute("cp " .. source .. " " .. destination, false)
+end
+
+function M.is_in_table(table, value)
+    for _, v in pairs(table) do
+        if v == value then
+            return true
+        end
+    end
+    return false
+end
+
+function M.get_relative_path(path)
+    local components = {}
+    for component in string.gmatch(path, "[^/]+") do
+        table.insert(components, component)
+    end
+
+    -- Find the index where "chapters", "sections", "figures" etc directory appears
+    local targetIndex = nil
+    local isFiguresPresent = false
+    for i, component in ipairs(components) do
+        if M.is_in_table(config.options.directories_to_avoid_creating_illustration_dir_in, component) then
+            targetIndex = i
+            break
+        elseif component == "figures" then
+            isFiguresPresent = true -- Mark if "figures" is present in the path
+        end
+    end
+
+    -- If neither "chapters" nor "sections" were found, but "figures" was, return "figures/"
+    if not targetIndex and isFiguresPresent then
+        return "figures" .. '/' .. components[#components]
+    elseif not targetIndex then
+        return "" -- Return an empty string if none of the keywords were found
+    end
+
+    -- Reconstruct the desired sub-path starting from the identified point
+    local subPathParts = {}
+    for i = targetIndex, #components do
+        table.insert(subPathParts, components[i])
+    end
+
+    return table.concat(subPathParts, "/")
 end
 
 return M

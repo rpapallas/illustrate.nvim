@@ -1,25 +1,72 @@
+vim.notify = require("notify")
 local M = {}
 
 M.namespace = vim.api.nvim_create_namespace("illustrate")
-local templates_dir = vim.fn.stdpath("data") .. "/lazy/illustrate.nvim/templates"
+
+local function get_plugin_path()
+    local stack_info = debug.getinfo(2, "S")
+    local file_path = stack_info.source
+
+    if file_path:sub(1, 1) == "@" then
+        file_path = file_path:sub(2)
+    end
+
+    local lua_index = file_path:find('/lua/')
+
+    if lua_index then
+        return file_path:sub(1, lua_index - 1)
+    else
+        return nil
+    end
+end
+
+local templates_dir = get_plugin_path() .. "/templates"
 
 local defaults = {
     illustration_dir = "figures",
+    directories_to_avoid_creating_illustration_dir_in = {
+        'sections',
+        'chapters',
+    },
+    prompt_caption = false,
+    prompt_label = false,
     template_files = {
         directory = {
             svg = templates_dir .. "/svg/",
+            ai = templates_dir .. "/ai/",
         },
         default = {
             svg = "default.svg",
-        },
+            ai = "default.ai",
+        }
     },
     text_templates = {
         svg = {
+            tex = [[
+\begin{figure}[h]
+  \centering
+  \includesvg[width=0.8\textwidth]{$FILE_PATH}
+  \caption{$CAPTION}
+  \label{$LABEL}
+\end{figure}
+            ]],
             md = "![$CAPTION]($FILE_PATH)",
         },
+        ai = {
+            tex = [[
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\linewidth]{$FILE_PATH}
+  \caption{$CAPTION}
+  \label{$LABEL}
+\end{figure}
+            ]],
+            md = "![$CAPTION]($FILE_PATH)",
+        }
     },
     default_app = {
         svg = "inkscape",
+        ai = "inkscape",
     },
 }
 

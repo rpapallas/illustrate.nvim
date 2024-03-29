@@ -32,6 +32,10 @@ Illustrator. The example key binding below is `<leader>io`.
 search through the available `.svg` and `.ai` documents in your current working
 directory and open them in Inkscape or Adobe Illustrator. The example key
 binding below is `<leader>if`.
+* By using [telescope](https://github.com/nvim-telescope/telescope.nvim), you can
+search through the available `.svg` and `.ai` documents in your current working
+directory, create a copy of one with a new name, and open the new copy in Inkscape or 
+Adobe Illustrator. The example key binding below is `<leader>ic`.
 
 The plugin currently supports macOS and Linux only, but I am open to add
 support for Windows too. I am happy to accept merge requests on this matter, I 
@@ -51,6 +55,8 @@ return {
     'rpapallas/illustrate.nvim',
     dependencies = {
         "rcarriga/nvim-notify",
+        'nvim-lua/plenary.nvim',
+        'nvim-telescope/telescope.nvim',
     },
     keys = function()
         local illustrate = require('illustrate')
@@ -77,6 +83,11 @@ return {
                 function() illustrate_finder.search_and_open() end,
                 desc = "Use telescope to search and open illustrations in default app."
             },
+            {
+                "<leader>ic",
+                function() illustrate_finder.search_create_copy_and_open() end,
+                desc = "Use telescope to search existing file, copy it with new name, and open it in default app."
+            },
         }
     end,
     opts = {
@@ -85,10 +96,41 @@ return {
 }
 ```
 
+### vim-plug
+
+```lua
+local vim = vim
+local Plug = vim.fn['plug#']
+
+vim.call('plug#begin')
+    Plug 'rpapallas/illustrate.nvim'
+    Plug 'rcarriga/nvim-notify'
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'nvim-telescope/telescope.nvim'
+vim.call('plug#end')
+
+local illustrate = require('illustrate')
+local illustrate_finder = require('illustrate.finder')
+vim.keymap.set('n', '<leader>is', function() illustrate.create_and_open_svg() end, {})
+vim.keymap.set('n', '<leader>ia', function() illustrate.create_and_open_ai() end, {})
+vim.keymap.set('n', '<leader>io', function() illustrate.open_under_cursor() end, {})
+vim.keymap.set('n', '<leader>if', function() illustrate_finder.search_and_open() end, {})
+vim.keymap.set('n', '<leader>ic', function() illustrate_finder.search_create_copy_and_open() end, {})
+```
+
+Note the dependencies above (`nvim-notify`, `plenary`, and `telescope`).
+Make sure to run `:PlugInstall`. Everything should work out of the box.
+
+### Configuration
+
 The default options (that you can override in `opts`) are:
 
 ```lua
 illustration_dir = "figures",
+directories_to_avoid_creating_illustration_dir_in = {
+    'sections',
+    'chapters',
+},
 template_files = { -- Templates used when new vector documents are created.
     -- You can optionally define a path to your own template dir and
     -- bootstrap your documents with a better template than an empty 
@@ -132,6 +174,13 @@ default_app = { -- default software to use for opening ai/svg files.
 },
 ```
 
+* The `directories_to_avoid_creating_illustration_dir_in` points sub-directory names that the
+  plugin should *avoid* creating an `illustration_dir` in. When an `illustration_dir` (e.g., `figures`)
+  isn't found in cwd or parent directory, the plugin will attempt to create one in 
+  the best place possible. By default it will avoid creating such a directory
+  in `sections` and `chapters` subdirectories and it will create one in a parent
+  directory immidietly above a `sections` or `chapters`.
+
 ## Using `.svg` and `.ai` files directly in LaTeX
 
 You can use `.svg` file directly in LaTeX given that you have inkscape 
@@ -147,6 +196,18 @@ LaTeX project:
 ```
 
 then you can include it like so: `\includegraphics[\linewidth]{figures/figure.ai}`.
+
+You can see example projects [here](examples/).
+
+## Examples
+
+You may be interested in using this plugin with different project structure.
+For example, you may want to have a figures directory for each chapter/section
+in your latex project. You can see different use cases of this plugin in the
+examples directory [here](examples/). A detailed README in there will provide
+more insights of how to use this plugin for each of your use case.
+
+If something isn't covered in the examples, please open an issue and let me know.
 
 ## Contributions, feedback and requests
 
