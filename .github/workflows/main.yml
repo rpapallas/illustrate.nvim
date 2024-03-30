@@ -13,4 +13,4 @@ jobs:
       
     - name: Run custom Docker container
       run: |
-        docker run -v "${GITHUB_WORKSPACE}:/root/.local/share/nvim/lazy/illustrate.nvim" rpapallas/illustrator:lazy
+        docker run -v "${GITHUB_WORKSPACE}:/root/.local/share/nvim/lazy/illustrate.nvim" rpapallas/illustrator.nvim:lazy
