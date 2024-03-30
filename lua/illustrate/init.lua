@@ -104,7 +104,7 @@ function M.create_and_open_svg(new_file_name, caption, label)
 
     caption, label = read_optionally_caption_and_label(caption, label)
     return false
-    return create_and_open(new_file_name, caption, label, 'svg')
+    -- return create_and_open(new_file_name, caption, label, 'svg')
 end
 
 function M.create_and_open_ai(new_file_name, caption, label)
