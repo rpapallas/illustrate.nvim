@@ -43,11 +43,6 @@ just don't have a Windows machine to develop/test it.
 
 ## Installation
 
-The plugin is currently designed for
-[lazy.nvim](https://github.com/folke/lazy.nvim). However, I am open to
-supporting other plugin managers as well (please feel free to open a pull
-request).
-
 ### lazy.nvim
 
 ```lua
