@@ -2,7 +2,18 @@ name: default
 
 on:
   push:
+    branches:
+      - master
+    paths:
+      - 'lua/**'
+      - 'tests/**'
+      - 'docker/**'
+
   pull_request:
+    paths:
+      - 'lua/**'
+      - 'tests/**'
+      - 'docker/**'
 
 jobs:
   run-tests-lazy:
@@ -14,6 +25,7 @@ jobs:
       - name: Run custom Docker container
         run: |
           docker run -v "${GITHUB_WORKSPACE}:/root/.local/share/nvim/lazy/illustrate.nvim" rpapallas/illustrate.nvim:lazy
+
   run-tests-packer:
     runs-on: ubuntu-latest
     steps:
@@ -23,6 +35,7 @@ jobs:
       - name: Run custom Docker container
         run: |
           docker run -v "${GITHUB_WORKSPACE}:/root/.local/share/nvim/site/pack/packer/opt/illustrate.nvim" rpapallas/illustrate.nvim:packer
+
   run-tests-plug:
     runs-on: ubuntu-latest
     steps:
