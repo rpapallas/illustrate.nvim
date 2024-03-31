@@ -24,3 +24,14 @@ push-packer:
 build-packer:
 	@docker build -t $(DOCKER_IMAGE_NAME):packer packer
 
+run-plug:
+	@docker run -it -v "$(shell pwd)/../":/root/.local/share/nvim/plugged/illustrate.nvim $(DOCKER_IMAGE_NAME):plug
+
+pull-plug:
+	@docker image pull $(DOCKER_IMAGE_NAME):plug
+
+push-plug:
+	@docker push $(DOCKER_IMAGE_NAME):plug
+
+build-plug:
+	@docker build -t $(DOCKER_IMAGE_NAME):plug vimplug
