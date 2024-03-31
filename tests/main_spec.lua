@@ -2,6 +2,14 @@ local uuid = require("uuid")
 local lfs = require("lfs")
 local illustrate = require('illustrate')
 
+local function directory_exists(path)
+    return lfs.attributes(path, "mode") == "directory"
+end
+
+local function file_exists(path)
+    return lfs.attributes(path, "mode") == "file"
+end
+
 describe('test create_and_open_svg', function()
     local function generate_paths(svg_file_name, figures_path)
         local unique_number = uuid()
@@ -11,14 +19,6 @@ describe('test create_and_open_svg', function()
         local figures_full_path = root_path .. '/' .. figures_path
         local svg_expected_path =  figures_full_path .. '/' .. svg_file_name .. '.svg'
         return root_path, figures_full_path, svg_expected_path
-    end
-
-    local function directory_exists(path)
-        return lfs.attributes(path, "mode") == "directory"
-    end
-
-    local function file_exists(path)
-        return lfs.attributes(path, "mode") == "file"
     end
 
     it('should create a new svg in newly created figures dir', function()
