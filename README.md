@@ -109,6 +109,19 @@ Make sure to run `:PlugInstall`. Everything should work out of the box.
 
 <details>
 <summary>packer</summary>
+
+```lua
+vim.cmd [[packadd packer.nvim]]
+
+return require('packer').startup(function(use)
+    use 'rpapallas/illustrate.nvim'
+    use 'wbthomason/packer.nvim'
+    use 'rcarriga/nvim-notify'
+    use 'nvim-lua/plenary.nvim'
+    use 'nvim-telescope/telescope.nvim'
+end)
+```
+
 </details>
 
 ## Configuration
