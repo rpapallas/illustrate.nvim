@@ -16,82 +16,72 @@ from within neovim. It works with LaTeX and Markdown files.
 
 ## Features
 
-With key bindings you define, `illustrate` can:
-
-* Create a new `.svg` file with a name of your choice, insert a code snippet
-(for both latex and markdown) of the figure automatically, and open the figure in either
-Inkscape or Adobe Illustrator. The example key binding provided below is
-`<leader>is`.
-* Create a new `.ai` file with a name of your choice, insert a code snippet (for
-both latex and markdown) of the figure automatically, and open the figure in either Inkscape
-or Adobe Illustrator. The example key binding provided below is `<leader>ia`.
-* Open the figure under the cursor (if in LaTeX, it will work even if the cursor
-is anywhere within a figure environment), in either Inkscape or Adobe
-Illustrator. The example key binding below is `<leader>io`.
-* By using [telescope](https://github.com/nvim-telescope/telescope.nvim), you can
-search through the available `.svg` and `.ai` documents in your current working
-directory and open them in Inkscape or Adobe Illustrator. The example key
-binding below is `<leader>if`.
-* By using [telescope](https://github.com/nvim-telescope/telescope.nvim), you can
-search through the available `.svg` and `.ai` documents in your current working
-directory, create a copy of one with a new name, and open the new copy in Inkscape or 
-Adobe Illustrator. The example key binding below is `<leader>ic`.
+| Feature                                           | Details                                                                                                                                                                                                                    |
+|---------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `illustrate.create_and_open_svg()`                | Creates a new `svg` file with a name of your choice, inserts a template code snippet (LaTeX/Markdown) in your current buffer and opens the SVG file in the default app (Inkscape or Adobe Illustrator).                    |
+| `illustrate.create_and_open_ai()`                 | Creates a new `ai` (Adobe Illustrator) file with a name of your choice, inserts a template code snippet (LaTeX/Markdown) in your current buffer and opens the SVG file in the default app (Inkscape or Adobe Illustrator). |
+| `illustrate.open_under_cursor()`                  | Searches for a figures environment (LaTeX / Markdown) under your cursor and opens that figure in default app (Inkscape / Adobe Illustrator). If the figure is missing it will offer the option to create it.               |
+| `illustrate_finder.search_and_open()`             | Using [telescope](https://github.com/nvim-telescope/telescope.nvim) it will show all `svg` and `ai` files and will open the selected one in the default app (Inkscape or Adobe Illustrator).                               |
+| `illustrate_finder.search_create_copy_and_open()` | Using [telescope](https://github.com/nvim-telescope/telescope.nvim) it will show all `svg` and `ai` files, offer to copy one with a new name, and open the new clone in the default app (Inkscape or Adobe Illustrator).   |
 
 The plugin currently supports macOS and Linux only, but I am open to add
-support for Windows too. I am happy to accept merge requests on this matter, I 
+support for Windows too. I am happy to accept pull requests on this matter, I 
 just don't have a Windows machine to develop/test it.
 
 ## Installation
 
-### lazy.nvim
+<details>
+<summary>lazy.nvim</summary>
 
 ```lua
 return { 
-    'rpapallas/illustrate.nvim',
-    dependencies = {
-        "rcarriga/nvim-notify",
-        'nvim-lua/plenary.nvim',
-        'nvim-telescope/telescope.nvim',
-    },
-    keys = function()
-        local illustrate = require('illustrate')
-        local illustrate_finder = require('illustrate.finder')
+'rpapallas/illustrate.nvim',
+dependencies = {
+    "rcarriga/nvim-notify",
+    'nvim-lua/plenary.nvim',
+    'nvim-telescope/telescope.nvim',
+},
+keys = function()
+    local illustrate = require('illustrate')
+    local illustrate_finder = require('illustrate.finder')
 
-        return {
-            {
-                "<leader>is",
-                function() illustrate.create_and_open_svg() end,
-                desc = "Create and open a new SVG file with provided name."
-            },
-            {
-                "<leader>ia",
-                function() illustrate.create_and_open_ai() end,
-                desc = "Create and open a new Adobe Illustrator file with provided name."
-            },
-            {
-                "<leader>io",
-                function() illustrate.open_under_cursor() end,
-                desc = "Open file under cursor (or file within environment under cursor)."
-            },
-            {
-                "<leader>if",
-                function() illustrate_finder.search_and_open() end,
-                desc = "Use telescope to search and open illustrations in default app."
-            },
-            {
-                "<leader>ic",
-                function() illustrate_finder.search_create_copy_and_open() end,
-                desc = "Use telescope to search existing file, copy it with new name, and open it in default app."
-            },
-        }
-    end,
-    opts = {
-        -- optionally define options.
-    },
+    return {
+        {
+            "<leader>is",
+            function() illustrate.create_and_open_svg() end,
+            desc = "Create and open a new SVG file with provided name."
+        },
+        {
+            "<leader>ia",
+            function() illustrate.create_and_open_ai() end,
+            desc = "Create and open a new Adobe Illustrator file with provided name."
+        },
+        {
+            "<leader>io",
+            function() illustrate.open_under_cursor() end,
+            desc = "Open file under cursor (or file within environment under cursor)."
+        },
+        {
+            "<leader>if",
+            function() illustrate_finder.search_and_open() end,
+            desc = "Use telescope to search and open illustrations in default app."
+        },
+        {
+            "<leader>ic",
+            function() illustrate_finder.search_create_copy_and_open() end,
+            desc = "Use telescope to search existing file, copy it with new name, and open it in default app."
+        },
+    }
+end,
+opts = {
+    -- optionally define options.
+},
 }
 ```
+</details>
 
-### vim-plug
+<details>
+<summary>vim-plug</summary>
 
 ```lua
 local vim = vim
@@ -115,10 +105,27 @@ vim.keymap.set('n', '<leader>ic', function() illustrate_finder.search_create_cop
 
 Note the dependencies above (`nvim-notify`, `plenary`, and `telescope`).
 Make sure to run `:PlugInstall`. Everything should work out of the box.
+</details>
 
-### Configuration
+<details>
+<summary>packer</summary>
+</details>
 
-The default options (that you can override in `opts`) are:
+## Configuration
+
+The plugin is customisable. The plugin offers the following options:
+
+| Config                                              | Purpose                                                                                                                                                                                                                                                                                                 |
+|-----------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `illustration_dir`                                  | The name of the directory to save figures in; defaults to `figures`.                                                                                                                                                                                                                                    |
+| `directories_to_avoid_creating_illustration_dir_in` | Sub-directory names to *avoid* creating an `illustration_dir` in. When an `illustration_dir` isn't found in cwd or parent directory, the plugin will attempt to create one in the best place possible. By default it will avoid `sections` and `chapters` and it will create one in a parent directory. |
+| `template_files`                                    | Points to directories where template files are stored.                                                                                                                                                                                                                                                  |
+| `text_templates`                                    | Template LaTeX or Markdown code to insert into the document on the creation of a new figure.                                                                                                                                                                                                            |
+| `default_app`                                       | Defines which app to use to open `svg` or `ai` files (either Inkscape or Adobe Illustrator).                                                                                                                                                                                                            |
+
+
+<details>
+<summary>Default Config File Example</summary>
 
 ```lua
 illustration_dir = "figures",
@@ -169,12 +176,7 @@ default_app = { -- default software to use for opening ai/svg files.
 },
 ```
 
-* The `directories_to_avoid_creating_illustration_dir_in` points sub-directory names that the
-  plugin should *avoid* creating an `illustration_dir` in. When an `illustration_dir` (e.g., `figures`)
-  isn't found in cwd or parent directory, the plugin will attempt to create one in 
-  the best place possible. By default it will avoid creating such a directory
-  in `sections` and `chapters` subdirectories and it will create one in a parent
-  directory immidietly above a `sections` or `chapters`.
+</details>
 
 ## Using `.svg` and `.ai` files directly in LaTeX
 
@@ -199,7 +201,9 @@ You can see example projects [here](examples/).
 You may be interested in using this plugin with different project structure.
 For example, you may want to have a figures directory for each chapter/section
 in your latex project. You can see different use cases of this plugin in the
-examples directory [here](examples/). A detailed README in there will provide
+examples directory [here](examples/). 
+
+A detailed README in there will provide
 more insights of how to use this plugin for each of your use case.
 
 If something isn't covered in the examples, please open an issue and let me know.
@@ -212,7 +216,5 @@ GitHub issue for those.
 
 ## Other notes
 
-* This is my first neovim plugin and the first time I write a lua code (any feedback is appreciated).
-* This plugin is inspired from [this](https://github.com/gillescastel/inkscape-figures) Python project from [Gilles Castel](https://github.com/gillescastel) and his excellent blog post [here](https://castel.dev/post/lecture-notes-2/), but extended to support Adobe Illustrator on top of Inkscape and be a native lua plugin for neovim.
-* The structure of this repo is based on [nvim-plugin-template](https://github.com/mistricky/nvim-plugin-template)
+* This plugin is inspired from [this](https://github.com/gillescastel/inkscape-figures) Python project from [Gilles Castel](https://github.com/gillescastel) and his excellent blog post [here](https://castel.dev/post/lecture-notes-2/), but extended to support Adobe Illustrator and be a native lua plugin for neovim.
 
