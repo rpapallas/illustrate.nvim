@@ -1,6 +1,7 @@
 local uuid = require("uuid")
 local lfs = require("lfs")
 local illustrate = require('illustrate')
+local illustrate_utils = require('illustrate.utils')
 
 local function directory_exists(path)
     return lfs.attributes(path, "mode") == "directory"
@@ -242,8 +243,94 @@ describe('test create_and_open_ai', function()
     end)
 end)
 
+describe('test get_all_illustration_files', function()
+    local function generate_paths_svg(svg_file_name, figures_path)
+        local unique_number = uuid()
+        local root_path = '/tmp/' .. unique_number
+        lfs.mkdir(root_path)
+
+        local figures_full_path = root_path .. '/' .. figures_path
+        local svg_expected_path =  figures_full_path .. '/' .. svg_file_name .. '.svg'
+        return root_path, figures_full_path, svg_expected_path
+    end
+
+    local function generate_paths_ai(ai_file_name, figures_path)
+        local unique_number = uuid()
+        local root_path = '/tmp/' .. unique_number
+        lfs.mkdir(root_path)
+
+        local figures_full_path = root_path .. '/' .. figures_path
+        local svg_expected_path =  figures_full_path .. '/' .. ai_file_name .. '.ai'
+        return root_path, figures_full_path, svg_expected_path
+    end
+
+    it('should return empty table if no illustrations exists', function()
+        local ai_file_name = 'test'
+        local root_path, figures_full_path, ai_expected_path = generate_paths_ai(ai_file_name, 'figures')
+
+        vim.api.nvim_command("edit " .. root_path .. '/test.tex')
+
+        local all_illustrations = illustrate_utils.get_all_illustration_files()
+        assert.is_same({}, all_illustrations)
+    end)
+
+    it('should return an svg file if one exists', function()
+        local svg_file_name = 'test'
+        local root_path, figures_full_path, svg_expected_path = generate_paths_svg(svg_file_name, 'figures')
+
+        vim.api.nvim_command("edit " .. root_path .. '/test.tex')
+        local was_success = illustrate.create_and_open_svg(svg_file_name)
+        assert.is_true(was_success)
+
+        local all_illustrations = illustrate_utils.get_all_illustration_files()
+        assert.is_same({svg_expected_path}, all_illustrations)
+    end)
+
+    it('should return both svg and ai files if both exist', function()
+        local file_name = 'test'
+        local root_path, figures_full_path, svg_expected_path = generate_paths_svg(file_name, 'figures')
+        local ai_expected_path = figures_full_path .. '/' .. file_name .. '.ai'
+
+
+        vim.api.nvim_command("edit " .. root_path .. '/test.tex')
+        local was_success = illustrate.create_and_open_svg(file_name)
+        assert.is_true(was_success)
+        was_success = illustrate.create_and_open_ai(file_name)
+        assert.is_true(was_success)
+
+        local all_illustrations = illustrate_utils.get_all_illustration_files()
+        assert.is_same({svg_expected_path, ai_expected_path}, all_illustrations)
+    end)
+
+    it('should return multiple svg and ai files if all exist', function()
+        local file_name_1 = 'test1'
+        local root_path, figures_full_path, svg_expected_path_1 = generate_paths_svg(file_name_1, 'figures')
+        local ai_expected_path_1 = figures_full_path .. '/' .. file_name_1 .. '.ai'
+
+        local file_name_2 = 'test2'
+        local svg_expected_path_2 = figures_full_path .. '/' .. file_name_2 .. '.svg'
+        local ai_expected_path_2 = figures_full_path .. '/' .. file_name_2 .. '.ai'
+
+        vim.api.nvim_command("edit " .. root_path .. '/test.tex')
+
+        local was_success = illustrate.create_and_open_svg(file_name_1)
+        assert.is_true(was_success)
+
+        was_success = illustrate.create_and_open_svg(file_name_2)
+        assert.is_true(was_success)
+
+        was_success = illustrate.create_and_open_ai(file_name_1)
+        assert.is_true(was_success)
+
+        was_success = illustrate.create_and_open_ai(file_name_2)
+        assert.is_true(was_success)
+
+        local all_illustrations = illustrate_utils.get_all_illustration_files()
+        assert.is_same({svg_expected_path_1, svg_expected_path_2,  ai_expected_path_1, ai_expected_path_2}, all_illustrations)
+    end)
+end)
+
 -- TODO: test put all tests of svg to ai too.
 -- TODO: test open_under_cursor
 -- TODO: test search_create_copy_and_open
--- TODO: test get_all_illustration_files
 -- TODO: search_and_open
