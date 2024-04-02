@@ -24,6 +24,11 @@ local function create_documenmt(filename, type)
 end
 
 local function create_and_open(new_file_name, caption, label, type)
+    if new_file_name:match("%.ai$") or new_file_name:match("%.svg$") then
+        vim.notify("[illustrate.nvim] The file name should not contain the file type (.ai/.svg).", vim.log.levels.ERROR)
+        return false
+    end
+
     new_file_name = new_file_name .. '.' .. type
     local new_document_path = create_documenmt(new_file_name, type)
     local relative_path = utils.get_relative_path(new_document_path)

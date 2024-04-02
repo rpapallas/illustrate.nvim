@@ -206,6 +206,7 @@ describe('test create_and_open_svg', function()
         local svg_file_name = ''
         local root_path, figures_full_path, svg_expected_path = generate_paths(svg_file_name, 'figures')
 
+        assert.is_false(directory_exists(figures_full_path))
         assert.is_false(file_exists(svg_expected_path))
 
         vim.api.nvim_command("edit " .. root_path .. '/test.tex')
@@ -213,6 +214,22 @@ describe('test create_and_open_svg', function()
 
         assert.is_false(was_success)
         assert.is_false(file_exists(svg_expected_path))
+        assert.is_false(directory_exists(figures_full_path))
+    end)
+
+    it('should not create figure if file type is given in the file name', function()
+        local svg_file_name = 'test.svg'
+        local root_path, figures_full_path, svg_expected_path = generate_paths(svg_file_name, 'figures')
+
+        assert.is_false(directory_exists(figures_full_path))
+        assert.is_false(file_exists(svg_expected_path))
+
+        vim.api.nvim_command("edit " .. root_path .. '/test.tex')
+        local was_success = illustrate.create_and_open_svg(svg_file_name)
+
+        assert.is_false(was_success)
+        assert.is_false(file_exists(svg_expected_path))
+        assert.is_false(directory_exists(figures_full_path))
     end)
 end)
 
