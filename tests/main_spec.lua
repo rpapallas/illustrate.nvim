@@ -329,8 +329,3 @@ describe('test get_all_illustration_files', function()
         assert.is_same({svg_expected_path_1, svg_expected_path_2,  ai_expected_path_1, ai_expected_path_2}, all_illustrations)
     end)
 end)
-
--- TODO: test put all tests of svg to ai too.
--- TODO: test open_under_cursor
--- TODO: test search_create_copy_and_open
--- TODO: search_and_open
