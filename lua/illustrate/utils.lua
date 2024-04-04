@@ -27,6 +27,17 @@ function M.get_path_to_illustration_dir()
         return vim.fn.getcwd() .. "/" .. directory_name
     end
 
+    local vimtex = vim.b.vimtex ~= nil
+    if vimtex then
+        local root_folder  = vim.fn.fnamemodify(vim.b.vimtex.tex, ":h")
+        local figures_dir = root_folder .. '/' .. directory_name
+        if directory_exists(figures_dir) then
+            return figures_dir
+        else
+            return nil
+        end
+    end
+
     -- Search for the directory in the directory of the file being edited and its parent directories
     return search_in_parent_directories(current_file_path)
 end
@@ -71,8 +82,8 @@ local function copy_template(template_path, filename)
 end
 
 local function create_illustration_dir()
-    local current_file_path = vim.fn.expand("%:p:h")
     local illustration_dir = config.options.illustration_dir
+    local current_file_path = vim.fn.expand("%:p:h")
 
     -- Function to check if the directory path contains "sections" or "chapters"
     local function has_excluded_directories(path)
@@ -105,6 +116,14 @@ local function create_illustration_dir()
     end
 
     local figures_dir = parent_without_excluded_directories .. '/' .. illustration_dir
+
+    -- If Vimtex plugin is used, override the path with it.
+    local vimtex = vim.b.vimtex ~= nil
+    if vimtex then
+        local root_folder  = vim.fn.fnamemodify(vim.b.vimtex.tex, ":h")
+        figures_dir = root_folder .. '/' .. illustration_dir
+    end
+
     vim.fn.mkdir(figures_dir, "p")
     vim.notify("Directory created under: " .. figures_dir)
     return figures_dir
