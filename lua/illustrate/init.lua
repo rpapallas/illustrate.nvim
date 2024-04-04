@@ -102,6 +102,11 @@ function M.create_and_open_svg(new_file_name, caption, label)
         return false
     end
 
+    if new_file_name:match("%.ai$") or new_file_name:match("%.svg$") then
+        vim.notify("[illustrate.nvim] The file name should not contain the file type (.ai/.svg).", vim.log.levels.ERROR)
+        return false
+    end
+
     caption, label = read_optionally_caption_and_label(caption, label)
     return create_and_open(new_file_name, caption, label, 'svg')
 end
@@ -113,6 +118,11 @@ function M.create_and_open_ai(new_file_name, caption, label)
 
     if new_file_name == '' then
         vim.notify("[illustrate.nvim] Figure name can't be empty.", vim.log.levels.ERROR)
+        return false
+    end
+
+    if new_file_name:match("%.ai$") or new_file_name:match("%.svg$") then
+        vim.notify("[illustrate.nvim] The file name should not contain the file type (.ai/.svg).", vim.log.levels.ERROR)
         return false
     end
 
