@@ -29,8 +29,7 @@ function M.get_path_to_illustration_dir()
 
     local vimtex = vim.b.vimtex ~= nil
     if vimtex then
-        local root_folder  = vim.fn.fnamemodify(vim.b.vimtex.tex, ":h")
-        local figures_dir = root_folder .. '/' .. directory_name
+        local figures_dir = vim.b.vimtex.root .. '/' .. directory_name
         if directory_exists(figures_dir) then
             return figures_dir
         else
@@ -120,8 +119,8 @@ local function create_illustration_dir()
     -- If Vimtex plugin is used, override the path with it.
     local vimtex = vim.b.vimtex ~= nil
     if vimtex then
-        local root_folder  = vim.fn.fnamemodify(vim.b.vimtex.tex, ":h")
-        figures_dir = root_folder .. '/' .. illustration_dir
+        vim.notify(vim.b.vimtex.root)
+        figures_dir = vim.b.vimtex.root .. '/' .. illustration_dir
     end
 
     vim.fn.mkdir(figures_dir, "p")
