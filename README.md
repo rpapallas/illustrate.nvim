@@ -3,8 +3,12 @@
 <p align="center">
 
 <img src="https://img.shields.io/badge/Neovim-57A143?logo=neovim&logoColor=fff&style=for-the-badge" alt="Neovim" />
-
 <img src="https://img.shields.io/badge/Made%20With%20Lua-2C2D72?logo=lua&logoColor=fff&style=for-the-badge" alt="made with lua" >
+
+<br/>
+<a href="https://github.com/rpapallas/illustrate.nvim/actions/workflows/default.yaml/badge.svg" alt="GitHub Actions">
+<img src="https://img.shields.io/github/actions/workflow/status/rpapallas/illustrate.nvim/default.yaml?branch=master">
+</a>
 
 Illustrate is a lua plugin for neovim that lets you quickly create, search 
 and open vector files in Inkscape (Linux, macOS) and/or Adobe Illustrator (macOS) 
