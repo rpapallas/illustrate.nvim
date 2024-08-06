@@ -10,9 +10,15 @@
 <img src="https://img.shields.io/github/actions/workflow/status/rpapallas/illustrate.nvim/default.yaml?branch=master">
 </a>
 
-Illustrate is a lua plugin for neovim that lets you quickly create, search 
-and open vector files in Inkscape (Linux, macOS) and/or Adobe Illustrator (macOS) 
-from within neovim. It works with LaTeX and Markdown files.
+Illustrate is a lua plugin for neovim that lets you quickly create, search
+and open vector files in different vector software from within neovim. It works
+with LaTeX and Markdown files.
+
+The supported vector software includes:
+
+* Inkscape (Linux, macOS)
+* Adobe Illustrator (macOS)
+* Affinity Designer 2 (macOS)
 
 ![demo](assets/demo.gif)
 
@@ -29,7 +35,7 @@ from within neovim. It works with LaTeX and Markdown files.
 | `illustrate_finder.search_create_copy_and_open()` | Using [telescope](https://github.com/nvim-telescope/telescope.nvim) it will show all `svg` and `ai` files, offer to copy one with a new name, and open the new clone in the default app (Inkscape or Adobe Illustrator).   |
 
 The plugin currently supports macOS and Linux only, but I am open to add
-support for Windows too. I am happy to accept pull requests on this matter, I 
+support for Windows too. I am happy to accept pull requests on this matter, I
 just don't have a Windows machine to develop/test it.
 
 ## Installation
@@ -38,7 +44,7 @@ just don't have a Windows machine to develop/test it.
 <summary>lazy.nvim</summary>
 
 ```lua
-return { 
+return {
 'rpapallas/illustrate.nvim',
 dependencies = {
     "rcarriga/nvim-notify",
@@ -152,8 +158,8 @@ directories_to_avoid_creating_illustration_dir_in = {
 },
 template_files = { -- Templates used when new vector documents are created.
     -- You can optionally define a path to your own template dir and
-    -- bootstrap your documents with a better template than an empty 
-    -- canvas. 
+    -- bootstrap your documents with a better template than an empty
+    -- canvas.
     directory = {
         svg = templates_dir .. "/svg/",
         ai = templates_dir .. "/ai/",
@@ -188,8 +194,8 @@ text_templates = { -- Default code template for each vector type (svg/ai) and ea
     }
 },
 default_app = { -- default software to use for opening ai/svg files.
-    svg = "inkscape", -- Options: inkscape/illustrator
-    ai = "inkscape", -- Options: inkscape/illustrator
+    svg = "inkscape", -- Options: inkscape/illustrator/affinity2
+    ai = "inkscape", -- Options: inkscape/illustrator/affinity2
 },
 ```
 
@@ -197,9 +203,9 @@ default_app = { -- default software to use for opening ai/svg files.
 
 ## Using `.svg` and `.ai` files directly in LaTeX
 
-You can use `.svg` file directly in LaTeX given that you have inkscape 
+You can use `.svg` file directly in LaTeX given that you have inkscape
 installed. You can then use `\includesvg[\linewidth]{figures/figure.svg}`.
-Make sure to include `--shell-escape` when you compile 
+Make sure to include `--shell-escape` when you compile
 (e.g. `lualatex --shell-escape main.tex ...`).
 
 To use `.ai` files directly, however, you need to put the following line in your
@@ -218,7 +224,7 @@ You can see example projects [here](examples/).
 You may be interested in using this plugin with different project structure.
 For example, you may want to have a figures directory for each chapter/section
 in your latex project. You can see different use cases of this plugin in the
-examples directory [here](examples/). 
+examples directory [here](examples/).
 
 A detailed README in there will provide
 more insights of how to use this plugin for each of your use case.
@@ -227,8 +233,8 @@ If something isn't covered in the examples, please open an issue and let me know
 
 ## Contributions, feedback and requests
 
-Happy to accept contributions/pull requests to extend and improve this simple 
-plugin. I am also open to feedback and requests for new features. Please open a 
+Happy to accept contributions/pull requests to extend and improve this simple
+plugin. I am also open to feedback and requests for new features. Please open a
 GitHub issue for those.
 
 ## Other notes

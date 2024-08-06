@@ -63,7 +63,7 @@ local function execute(command, background)
         handle:close()
 
         if result ~= "" then
-            -- Avoid showing the error if it is "file not found" because we will 
+            -- Avoid showing the error if it is "file not found" because we will
             -- prompt to user to create it if not found.
             local start_index, _ = string.find(result, 'does not exist')
             if not start_index then
@@ -145,6 +145,8 @@ function M.open_file_in_vector_program(filename)
         return execute("inkscape " .. filename .. " >/dev/null ", true)
     elseif default_app == 'illustrator' and os_name == 'Darwin' then
         return execute("open -a 'Adobe Illustrator' " .. filename, false)
+    elseif default_app == 'affinity2' and os_name == 'Darwin' then
+        return execute("open -a 'Affinity Designer 2' " .. filename, false)
     end
 end
 
