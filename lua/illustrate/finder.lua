@@ -5,7 +5,7 @@ local conf = require("telescope.config").values
 local action_state = require("telescope.actions.state")
 local actions = require("telescope.actions")
 local utils = require("illustrate.utils")
-vim.notify = require("notify")
+utils.setup_notify()
 
 function M.search_and_open()
     local files = utils.get_all_illustration_files()

@@ -1,7 +1,7 @@
 local M = {}
-local utils = require("illustrate.utils")
 local config = require("illustrate.config")
-vim.notify = require("notify")
+local utils = require("illustrate.utils")
+utils.setup_notify()
 
 function M.setup(options)
     config.setup(options)

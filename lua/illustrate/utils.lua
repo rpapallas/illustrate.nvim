@@ -1,6 +1,11 @@
 local M = {}
 local config = require("illustrate.config")
-vim.notify = require("notify")
+
+function M.setup_notify()
+    vim.notify = function(msg, level, opts)
+        vim.api.nvim_echo({ { msg, "None" } }, true, {})
+    end
+end
 
 function M.get_path_to_illustration_dir()
     local directory_name = config.options.illustration_dir
