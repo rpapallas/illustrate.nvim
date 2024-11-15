@@ -47,7 +47,6 @@ just don't have a Windows machine to develop/test it.
 return {
 'rpapallas/illustrate.nvim',
 dependencies = {
-    "rcarriga/nvim-notify",
     'nvim-lua/plenary.nvim',
     'nvim-telescope/telescope.nvim',
 },
@@ -99,7 +98,6 @@ local Plug = vim.fn['plug#']
 
 vim.call('plug#begin')
     Plug 'rpapallas/illustrate.nvim'
-    Plug 'rcarriga/nvim-notify'
     Plug 'nvim-lua/plenary.nvim'
     Plug 'nvim-telescope/telescope.nvim'
 vim.call('plug#end')
@@ -113,7 +111,7 @@ vim.keymap.set('n', '<leader>if', function() illustrate_finder.search_and_open()
 vim.keymap.set('n', '<leader>ic', function() illustrate_finder.search_create_copy_and_open() end, {})
 ```
 
-Note the dependencies above (`nvim-notify`, `plenary`, and `telescope`).
+Note the dependencies above (`plenary`, and `telescope`).
 Make sure to run `:PlugInstall`. Everything should work out of the box.
 </details>
 
@@ -126,7 +124,6 @@ vim.cmd [[packadd packer.nvim]]
 return require('packer').startup(function(use)
     use 'rpapallas/illustrate.nvim'
     use 'wbthomason/packer.nvim'
-    use 'rcarriga/nvim-notify'
     use 'nvim-lua/plenary.nvim'
     use 'nvim-telescope/telescope.nvim'
 end)
