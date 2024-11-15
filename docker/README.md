@@ -14,3 +14,5 @@ Run the tests:
 ```
 make run-lazy
 ```
+
+Similar commands exist for other plugin managers: `build-packer`  `build-plug`, etc.

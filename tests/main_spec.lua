@@ -1,4 +1,14 @@
+local function random_bytes(length)
+    local bytes = {}
+    for i = 1, length do
+        table.insert(bytes, string.char(math.random(0, 255)))
+    end
+    return table.concat(bytes)
+end
+
 local uuid = require("uuid")
+uuid.set_rng(random_bytes)
+
 local lfs = require("lfs")
 local illustrate = require('illustrate')
 local illustrate_utils = require('illustrate.utils')
