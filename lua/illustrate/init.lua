@@ -64,11 +64,11 @@ end
 
 function M.open_under_cursor()
     local file_path = extract_path_from_figure()
-    local filename = string.match(file_path, "([^/]+)$")
-    local illustration_dir = utils.get_path_to_illustration_dir()
-    file_path = illustration_dir .. '/' .. filename
 
     if file_path then
+        local filename = string.match(file_path, "([^/]+)$")
+        local illustration_dir = utils.get_path_to_illustration_dir()
+        file_path = illustration_dir .. '/' .. filename
         local open_was_successful = utils.open_file_in_vector_program(file_path)
 
         if not open_was_successful then
