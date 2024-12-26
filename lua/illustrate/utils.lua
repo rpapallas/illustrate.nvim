@@ -17,7 +17,7 @@ function M.get_path_to_illustration_dir()
     local function search_in_parent_directories(path)
         local parent_directory = vim.fn.fnamemodify(path, ":h")
         if path == parent_directory then
-            return nil  -- Reached root directory, return nil
+            return nil -- Reached root directory, return nil
         elseif directory_exists(path) then
             return path .. "/" .. directory_name
         else
@@ -34,9 +34,9 @@ function M.get_path_to_illustration_dir()
 
     local vimtex = vim.b.vimtex ~= nil
     if vimtex then
-        local figures_dir = vim.b.vimtex.root .. '/' .. directory_name
+        local figures_dir = vim.b.vimtex.root
         if directory_exists(figures_dir) then
-            return figures_dir
+            return figures_dir .. "/" .. directory_name
         else
             return nil
         end
@@ -47,7 +47,7 @@ function M.get_path_to_illustration_dir()
 end
 
 local function get_os()
-    local fh, _ = assert(io.popen("uname -o 2>/dev/null","r"))
+    local fh, _ = assert(io.popen("uname -o 2>/dev/null", "r"))
     local osname
     if fh then
         osname = fh:read()
@@ -70,7 +70,7 @@ local function execute(command, background)
         if result ~= "" then
             -- Avoid showing the error if it is "file not found" because we will
             -- prompt to user to create it if not found.
-            local start_index, _ = string.find(result, 'does not exist')
+            local start_index, _ = string.find(result, "does not exist")
             if not start_index then
                 vim.notify("[illustrate.nvim] Error: " .. result, vim.log.levels.ERROR)
             end
@@ -94,10 +94,12 @@ local function create_illustration_dir()
         local normalized_path = path:gsub("\\", "/")
 
         for _, name in ipairs(config.options.directories_to_avoid_creating_illustration_dir_in) do
-            if string.find(normalized_path, "/" .. name .. "/") or
-               string.match(normalized_path, "^" .. name .. "/") or
-               string.match(normalized_path, "/" .. name .. "$") or
-               normalized_path == name then
+            if
+                string.find(normalized_path, "/" .. name .. "/")
+                or string.match(normalized_path, "^" .. name .. "/")
+                or string.match(normalized_path, "/" .. name .. "$")
+                or normalized_path == name
+            then
                 return true
             end
         end
@@ -119,13 +121,13 @@ local function create_illustration_dir()
         parent_without_excluded_directories = get_parent_without_excluded_directories(current_file_path)
     end
 
-    local figures_dir = parent_without_excluded_directories .. '/' .. illustration_dir
+    local figures_dir = parent_without_excluded_directories .. "/" .. illustration_dir
 
     -- If Vimtex plugin is used, override the path with it.
     local vimtex = vim.b.vimtex ~= nil
     if vimtex then
         vim.notify(vim.b.vimtex.root)
-        figures_dir = vim.b.vimtex.root .. '/' .. illustration_dir
+        figures_dir = vim.b.vimtex.root .. "/" .. illustration_dir
     end
 
     vim.fn.mkdir(figures_dir, "p")
@@ -146,11 +148,11 @@ function M.open_file_in_vector_program(filename)
         return
     end
 
-    if default_app == 'inkscape' then
+    if default_app == "inkscape" then
         return execute("inkscape " .. filename .. " >/dev/null ", true)
-    elseif default_app == 'illustrator' and os_name == 'Darwin' then
+    elseif default_app == "illustrator" and os_name == "Darwin" then
         return execute("open -a 'Adobe Illustrator' " .. filename, false)
-    elseif default_app == 'affinity2' and os_name == 'Darwin' then
+    elseif default_app == "affinity2" and os_name == "Darwin" then
         return execute("open -a 'Affinity Designer 2' " .. filename, false)
     end
 end
@@ -173,13 +175,13 @@ function M.insert_include_code(filename, caption, label)
     if caption then
         insert_code = insert_code:gsub("$CAPTION", caption)
     else
-        insert_code = insert_code:gsub("$CAPTION", 'CAPTION HERE')
+        insert_code = insert_code:gsub("$CAPTION", "CAPTION HERE")
     end
 
     if label then
         insert_code = insert_code:gsub("$LABEL", label)
     else
-        insert_code = insert_code:gsub("$LABEL", 'fig:label-here')
+        insert_code = insert_code:gsub("$LABEL", "fig:label-here")
     end
 
     if insert_code ~= "" then
@@ -209,7 +211,7 @@ function M.create_document(filename, template_path)
         directory_path = create_illustration_dir()
     end
 
-    local file_path = directory_path .. '/' .. filename
+    local file_path = directory_path .. "/" .. filename
     copy_template(template_path, file_path)
     return file_path
 end
@@ -248,7 +250,8 @@ function M.extract_path_from_tex_figure_environment()
         -- Search within the figure environment for the includesvg line
         for i = start_line, end_line do
             local line = vim.api.nvim_buf_get_lines(0, i - 1, i, false)[1]
-            local path = line:match("\\include[s]?vg%[?[^%]]*%]?%{(.-)%}") or line:match("\\includegraphics%[?[^%]]*%]?%{(.-)%}")
+            local path = line:match("\\include[s]?vg%[?[^%]]*%]?%{(.-)%}")
+                or line:match("\\includegraphics%[?[^%]]*%]?%{(.-)%}")
             if path then
                 return path
             end
@@ -301,7 +304,7 @@ function M.get_relative_path(path)
 
     -- If neither "chapters" nor "sections" were found, but "figures" was, return "figures/"
     if not targetIndex and isFiguresPresent then
-        return "figures" .. '/' .. components[#components]
+        return "figures" .. "/" .. components[#components]
     elseif not targetIndex then
         return "" -- Return an empty string if none of the keywords were found
     end
