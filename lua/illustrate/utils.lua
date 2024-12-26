@@ -36,7 +36,7 @@ function M.get_path_to_illustration_dir()
     if vimtex then
         local figures_dir = vim.b.vimtex.root
         if directory_exists(figures_dir) then
-            return figures_dir
+            return figures_dir .. "/" .. directory_name
         else
             return nil
         end
