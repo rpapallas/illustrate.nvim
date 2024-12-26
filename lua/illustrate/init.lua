@@ -68,6 +68,12 @@ function M.open_under_cursor()
     if file_path then
         local filename = string.match(file_path, "([^/]+)$")
         local illustration_dir = utils.get_path_to_illustration_dir()
+
+        if illustration_dir == nil then
+            vim.notify("[illustrate.nvim] You attempt to open a figure but the illustration directory cannot be found.", vim.log.levels.ERROR)
+            return
+        end
+
         file_path = illustration_dir .. '/' .. filename
         local open_was_successful = utils.open_file_in_vector_program(file_path)
 
