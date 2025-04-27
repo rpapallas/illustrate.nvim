@@ -41,8 +41,10 @@ local function extract_path_from_figure()
     elseif filetype == "markdown" then
         local line = vim.fn.getline(".")
         file_path = line:match("!%[[^%]]*%]%((.-)%s*%)")
+    elseif filetype == "typst" then
+        file_path = utils.extract_path_from_typst_figure_environment()
     else
-        vim.notify("[illustrate.nvim] Not a tex or markdown document.", vim.log.levels.INFO)
+        vim.notify("[illustrate.nvim] Not a tex, markdown or typst, document.", vim.log.levels.INFO)
         return
     end
 
@@ -54,8 +56,8 @@ local function read_optionally_caption_and_label(caption, label)
         caption = vim.fn.input("Provide caption for the figure: ")
     end
 
-    local is_latex_document = vim.bo.filetype == 'tex'
-    if label == nil and config.options.prompt_label and is_latex_document then
+    local is_latex_or_typst_document = vim.bo.filetype == 'tex' or vim.bo.filetype == 'typst'
+    if label == nil and config.options.prompt_label and is_latex_or_typst_document then
         label = vim.fn.input("Provide label for the figure: ")
     end
 
