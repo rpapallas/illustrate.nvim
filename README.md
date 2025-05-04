@@ -134,12 +134,17 @@ end)
 
 ## Configuration
 
-The plugin is customisable. The plugin offers the following options:
+The plugin is customisable. The plugin offers the following options.
+For example, if you are using lazy.nvim, you can
+overwrite these options by adding them as key-value pairs in the
+`opts = { ... }` (see installation above).
 
 | Config                                              | Purpose                                                                                                                                                                                                                                                                                                 |
 |-----------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `illustration_dir`                                  | The name of the directory to save figures in; defaults to `figures`.                                                                                                                                                                                                                                    |
 | `directories_to_avoid_creating_illustration_dir_in` | Sub-directory names to *avoid* creating an `illustration_dir` in. When an `illustration_dir` isn't found in cwd or parent directory, the plugin will attempt to create one in the best place possible. By default it will avoid `sections` and `chapters` and it will create one in a parent directory. |
+| `prompt_caption`                                    | This will prompt the user after the creation of a new figure (latex/typst) to also provide a caption for the figure. Defaults to `false`, set to `true` manually if you want this feature. |
+| `prompt_label`                                      | This will prompt the user after the creation of a new figure (latex/typst) to also provide a label for the figure. Defaults to `false`, set to `true` manually if you want this feature. |
 | `template_files`                                    | Points to directories where template files are stored.                                                                                                                                                                                                                                                  |
 | `text_templates`                                    | Template LaTeX, Markdown or Typst code to insert into the document on the creation of a new figure.                                                                                                                                                                                                            |
 | `default_app`                                       | Defines which app to use to open `svg` or `ai` files: `inkscape`, `illustrator`, or `affinity2`).                                                                                                                                                                                                            |
