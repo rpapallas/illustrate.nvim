@@ -50,6 +50,12 @@ local defaults = {
 \end{figure}
             ]],
             md = "![$CAPTION]($FILE_PATH)",
+            typ = [[
+#figure(
+  image("$FILE_PATH", width: 80%),
+  caption: [$CAPTION]
+) <$LABEL>
+            ]]
         },
         ai = {
             tex = [[
@@ -61,6 +67,12 @@ local defaults = {
 \end{figure}
             ]],
             md = "![$CAPTION]($FILE_PATH)",
+            typ = [[
+#figure(
+  image("$FILE_PATH", width: 80%),
+  caption: [$CAPTION]
+) <$LABEL>
+            ]]
         }
     },
     default_app = {
