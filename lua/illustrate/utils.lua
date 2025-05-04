@@ -170,6 +170,10 @@ function M.insert_include_code(filename, caption, label)
         insert_code = config.options.text_templates.svg.md:gsub("$FILE_PATH", filename)
     elseif filetype == "markdown" and extension == "ai" then
         insert_code = config.options.text_templates.ai.md:gsub("$FILE_PATH", filename)
+    elseif filetype == "typst" and extension == "svg" then
+        insert_code = config.options.text_templates.svg.typ:gsub("$FILE_PATH", filename)
+    elseif filetype == "typst" and extension == "ai" then
+        insert_code = config.options.text_templates.ai.typ:gsub("$FILE_PATH", filename)
     end
 
     if caption then
@@ -252,6 +256,60 @@ function M.extract_path_from_tex_figure_environment()
             local line = vim.api.nvim_buf_get_lines(0, i - 1, i, false)[1]
             local path = line:match("\\include[s]?vg%[?[^%]]*%]?%{(.-)%}")
                 or line:match("\\includegraphics%[?[^%]]*%]?%{(.-)%}")
+            if path then
+                return path
+            end
+        end
+    end
+end
+
+function M.extract_path_from_typst_figure_environment()
+    local current_line = vim.api.nvim_win_get_cursor(0)[1]
+    local start_line = current_line
+    local last_line_number = vim.api.nvim_buf_line_count(0)
+
+    -- Search backward to find the start of the figure environment
+    while start_line > 0 do
+        local line = vim.api.nvim_buf_get_lines(0, start_line - 1, start_line, false)[1]
+        if line:find("#figure%(") then
+            break
+        end
+        start_line = start_line - 1
+    end
+
+    if start_line ~= current_line and start_line == 0 then
+        return
+    end
+
+    local end_line = start_line
+
+    -- Search forward to find the end of the figure environment
+    local num_opening = 0
+    local num_closing = 0
+    while end_line <= last_line_number do
+        local line = vim.api.nvim_buf_get_lines(0, end_line - 1, end_line, false)[1]
+        local count = 0
+        _, count = line:gsub("%(", "")
+        num_opening = num_opening + count
+        _, count = line:gsub("%)", "")
+        num_closing = num_closing + count
+        if num_opening == 3 then
+            -- Third environment opened, this means we are passed figure
+            return
+        end
+        if num_closing == 2 then
+            -- This means we are at the end of the image or figure environment
+            break
+        end
+        end_line = end_line + 1
+    end
+
+    -- Check if the cursor position is within the figure environment
+    if current_line >= start_line and current_line <= end_line then
+        -- Search within the figure environment for the includesvg line
+        for i = start_line, end_line do
+            local line = vim.api.nvim_buf_get_lines(0, i - 1, i, false)[1]
+            local path = line:match('"(.-)"')
             if path then
                 return path
             end

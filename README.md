@@ -12,7 +12,7 @@
 
 Illustrate is a lua plugin for neovim that lets you quickly create, search
 and open vector files in different vector software from within neovim. It works
-with LaTeX and Markdown files.
+with LaTeX, Markdown and Typst files.
 
 The supported vector software includes:
 
@@ -28,9 +28,9 @@ The supported vector software includes:
 
 | Feature                                           | Details                                                                                                                                                                                                                    |
 |---------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `illustrate.create_and_open_svg()`                | Creates a new `svg` file with a name of your choice, inserts a template code snippet (LaTeX/Markdown) in your current buffer and opens the SVG file in the default app (Inkscape or Adobe Illustrator).                    |
-| `illustrate.create_and_open_ai()`                 | Creates a new `ai` (Adobe Illustrator) file with a name of your choice, inserts a template code snippet (LaTeX/Markdown) in your current buffer and opens the SVG file in the default app (Inkscape or Adobe Illustrator). |
-| `illustrate.open_under_cursor()`                  | Searches for a figures environment (LaTeX / Markdown) under your cursor and opens that figure in default app (Inkscape / Adobe Illustrator). If the figure is missing it will offer the option to create it.               |
+| `illustrate.create_and_open_svg()`                | Creates a new `svg` file with a name of your choice, inserts a template code snippet (LaTeX/Markdown/Typst) in your current buffer and opens the SVG file in the default app (Inkscape or Adobe Illustrator).                    |
+| `illustrate.create_and_open_ai()`                 | Creates a new `ai` (Adobe Illustrator) file with a name of your choice, inserts a template code snippet (LaTeX/Markdown/Typst) in your current buffer and opens the SVG file in the default app (Inkscape or Adobe Illustrator). |
+| `illustrate.open_under_cursor()`                  | Searches for a figures environment (LaTeX/Markdown/Typst) under your cursor and opens that figure in default app (Inkscape / Adobe Illustrator). If the figure is missing it will offer the option to create it.               |
 | `illustrate_finder.search_and_open()`             | Using [telescope](https://github.com/nvim-telescope/telescope.nvim) it will show all `svg` and `ai` files and will open the selected one in the default app (Inkscape or Adobe Illustrator).                               |
 | `illustrate_finder.search_create_copy_and_open()` | Using [telescope](https://github.com/nvim-telescope/telescope.nvim) it will show all `svg` and `ai` files, offer to copy one with a new name, and open the new clone in the default app (Inkscape or Adobe Illustrator).   |
 
@@ -140,7 +140,7 @@ The plugin is customisable. The plugin offers the following options:
 | `illustration_dir`                                  | The name of the directory to save figures in; defaults to `figures`.                                                                                                                                                                                                                                    |
 | `directories_to_avoid_creating_illustration_dir_in` | Sub-directory names to *avoid* creating an `illustration_dir` in. When an `illustration_dir` isn't found in cwd or parent directory, the plugin will attempt to create one in the best place possible. By default it will avoid `sections` and `chapters` and it will create one in a parent directory. |
 | `template_files`                                    | Points to directories where template files are stored.                                                                                                                                                                                                                                                  |
-| `text_templates`                                    | Template LaTeX or Markdown code to insert into the document on the creation of a new figure.                                                                                                                                                                                                            |
+| `text_templates`                                    | Template LaTeX, Markdown or Typst code to insert into the document on the creation of a new figure.                                                                                                                                                                                                            |
 | `default_app`                                       | Defines which app to use to open `svg` or `ai` files: `inkscape`, `illustrator`, or `affinity2`).                                                                                                                                                                                                            |
 
 
