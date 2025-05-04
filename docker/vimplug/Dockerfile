@@ -11,10 +11,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install neovim
-RUN wget https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz && tar -C /opt -xzf nvim-linux64.tar.gz
+RUN wget https://github.com/neovim/neovim/releases/download/v0.10.0/nvim-linux64.tar.gz && tar -C /opt -xzf nvim-linux64.tar.gz
 ENV PATH="$PATH:/opt/nvim-linux64/bin"
 
-RUN luarocks install uuid 
+RUN luarocks install uuid
 RUN luarocks install luafilesystem
 
 COPY config /root/.config/nvim
