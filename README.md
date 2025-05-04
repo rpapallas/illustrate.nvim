@@ -83,7 +83,8 @@ keys = function()
     }
 end,
 opts = {
-    -- optionally define options.
+    -- optionally define options. Look at the "Default Config File Example"
+    -- under "Configuration" in the GitHub README.
 },
 }
 ```
@@ -147,12 +148,16 @@ The plugin is customisable. The plugin offers the following options:
 <details>
 <summary>Default Config File Example</summary>
 
+You can overwrite default settings by setting the following:
+
 ```lua
 illustration_dir = "figures",
 directories_to_avoid_creating_illustration_dir_in = {
     'sections',
     'chapters',
 },
+prompt_caption = false,
+prompt_label = false,
 template_files = { -- Templates used when new vector documents are created.
     -- You can optionally define a path to your own template dir and
     -- bootstrap your documents with a better template than an empty
@@ -177,6 +182,12 @@ text_templates = { -- Default code template for each vector type (svg/ai) and ea
 \end{figure}
             ]],
         md = "![caption]($FILE_PATH)",
+        typ = [[
+#figure(
+  image("$FILE_PATH", width: 80%),
+  caption: [$CAPTION]
+) <$LABEL>
+            ]]
     },
     ai = {
         tex = [[
@@ -188,6 +199,12 @@ text_templates = { -- Default code template for each vector type (svg/ai) and ea
 \end{figure}
             ]],
         md = "![caption]($FILE_PATH)",
+        typ = [[
+#figure(
+  image("$FILE_PATH", width: 80%),
+  caption: [$CAPTION]
+) <$LABEL>
+            ]]
     }
 },
 default_app = { -- default software to use for opening ai/svg files.
