@@ -264,57 +264,50 @@ function M.extract_path_from_tex_figure_environment()
 end
 
 function M.extract_path_from_typst_figure_environment()
-    local current_line = vim.api.nvim_win_get_cursor(0)[1]
-    local start_line = current_line
-    local last_line_number = vim.api.nvim_buf_line_count(0)
+    local bufnr = vim.api.nvim_get_current_buf()
+    local cursor = vim.api.nvim_win_get_cursor(0)
+    local cur_row = cursor[1]
 
-    -- Search backward to find the start of the figure environment
-    while start_line > 0 do
-        local line = vim.api.nvim_buf_get_lines(0, start_line - 1, start_line, false)[1]
-        if line:find("#figure%(") then
+    -- Step 1: find the start of the #figure(…)
+    local start_line
+    for i = cur_row, 1, -1 do
+        local line = vim.api.nvim_buf_get_lines(bufnr, i-1, i, false)[1]
+        if line:match("^%s*#figure%s*%(") then
+            start_line = i
             break
         end
-        start_line = start_line - 1
+    end
+    if not start_line then
+        return nil  -- not inside any figure
     end
 
-    if start_line ~= current_line and start_line == 0 then
-        return
-    end
-
-    local end_line = start_line
-
-    -- Search forward to find the end of the figure environment
-    local num_opening = 0
-    local num_closing = 0
-    while end_line <= last_line_number do
-        local line = vim.api.nvim_buf_get_lines(0, end_line - 1, end_line, false)[1]
-        local count = 0
-        _, count = line:gsub("%(", "")
-        num_opening = num_opening + count
-        _, count = line:gsub("%)", "")
-        num_closing = num_closing + count
-        if num_opening == 3 then
-            -- Third environment opened, this means we are passed figure
-            return
-        end
-        if num_closing == 2 then
-            -- This means we are at the end of the image or figure environment
-            break
-        end
-        end_line = end_line + 1
-    end
-
-    -- Check if the cursor position is within the figure environment
-    if current_line >= start_line and current_line <= end_line then
-        -- Search within the figure environment for the includesvg line
-        for i = start_line, end_line do
-            local line = vim.api.nvim_buf_get_lines(0, i - 1, i, false)[1]
-            local path = line:match('"(.-)"')
-            if path then
-                return path
+    -- Step 2: scan forward to find where the parentheses balance back to zero
+    local open_parens = 0
+    local end_line
+    for i = start_line, vim.api.nvim_buf_line_count(bufnr) do
+        local line = vim.api.nvim_buf_get_lines(bufnr, i-1, i, false)[1]
+        -- count each '(' and ')'
+        for char in line:gmatch(".") do
+            if char == "(" then
+                open_parens = open_parens + 1
+            elseif char == ")" then
+                open_parens = open_parens - 1
             end
         end
+        if open_parens == 0 then
+            end_line = i
+            break
+        end
     end
+    if not end_line then
+        return nil  -- malformed figure block
+    end
+
+    -- Step 3: extract the block and match the image path
+    local lines = vim.api.nvim_buf_get_lines(bufnr, start_line-1, end_line, false)
+    local text  = table.concat(lines, " ")
+    local path  = text:match('image%s*%(%s*"([^"]+)"')
+    return path
 end
 
 function M.get_all_illustration_files()
