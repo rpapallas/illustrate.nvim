@@ -20,7 +20,9 @@ The supported vector software includes:
 * Adobe Illustrator (macOS)
 * Affinity Designer 2 (macOS)
 
-![demo](assets/demo.gif)
+### YouTube Video - Walk-through/tutorial (click to watch)
+
+[![demo youtube video](assets/thumbnail.png)](https://www.youtube.com/watch?v=FHtoGKyml7k)
 
 </p>
 
