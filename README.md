@@ -20,6 +20,9 @@ The supported vector software includes:
 * Adobe Illustrator (macOS)
 * Affinity Designer 2 (macOS)
 
+> [!note]
+> As Illustrate open Inkscape via the CLI interface, and Inkscape installed via the <a href="https://inkscape.org/release/inkscape-dev/?latest=1">official download page</a> seems to not configure it for you, it's recommended to install Inkscape via Homebrew as CLI is available out of the box.
+
 ### YouTube Video - Walk-through/tutorial (click to watch)
 
 [![demo youtube video](assets/thumbnail.png)](https://www.youtube.com/watch?v=FHtoGKyml7k)
